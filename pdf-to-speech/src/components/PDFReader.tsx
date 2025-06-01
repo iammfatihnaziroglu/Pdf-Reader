@@ -72,7 +72,20 @@ export function PDFReader() {
       const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
       pdfRef.current = pdf;
       dispatch({ type: 'SET_PAGE', payload: { current: 1, total: pdf.numPages } });
-      await loadPage(1);
+
+      // Tüm sayfa metinlerini oku
+      const pagesText: string[] = [];
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ').replace(/\s+/g, ' ').trim();
+        pagesText.push(pageText);
+      }
+      dispatch({ type: 'SET_PAGES_TEXT', payload: pagesText });
+      // İlk sayfa metnini göster
+      dispatch({ type: 'SET_TEXT', payload: pagesText[0] || '' });
+      dispatch({ type: 'SET_PAGE', payload: { current: 1, total: pdf.numPages } });
+      dispatch({ type: 'SET_SENTENCE', payload: '' });
     } catch (error) {
       console.error('PDF yükleme hatası:', error);
       alert('PDF yüklenirken bir hata oluştu.');
@@ -83,21 +96,23 @@ export function PDFReader() {
 
   const loadPage = async (pageNumber: number) => {
     if (!pdfRef.current) return;
-
-    try {
-      const page = await pdfRef.current.getPage(pageNumber);
-      const textContent = await page.getTextContent();
-      const pageText = textContent.items
-        .map(item => item.str)
-        .join(' ')
-        .replace(/\s+/g, ' ')
-        .trim();
-      
-      dispatch({ type: 'SET_TEXT', payload: pageText });
+    const pagesText = state.pagesText;
+    if (pagesText && pagesText[pageNumber - 1]) {
+      dispatch({ type: 'SET_TEXT', payload: pagesText[pageNumber - 1] });
       dispatch({ type: 'SET_PAGE', payload: { current: pageNumber, total: state.totalPages } });
       dispatch({ type: 'SET_SENTENCE', payload: '' });
-    } catch (error) {
-      console.error('Sayfa yükleme hatası:', error);
+    } else {
+      // Eski yöntemle yükle (güvenlik için)
+      try {
+        const page = await pdfRef.current.getPage(pageNumber);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ').replace(/\s+/g, ' ').trim();
+        dispatch({ type: 'SET_TEXT', payload: pageText });
+        dispatch({ type: 'SET_PAGE', payload: { current: pageNumber, total: state.totalPages } });
+        dispatch({ type: 'SET_SENTENCE', payload: '' });
+      } catch (error) {
+        console.error('Sayfa yükleme hatası:', error);
+      }
     }
   };
 

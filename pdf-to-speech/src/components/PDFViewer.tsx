@@ -1,3 +1,5 @@
+import { usePDF } from '../context/PDFContext';
+
 interface PDFViewerProps {
   currentText: string;
   currentPage: number;
@@ -6,8 +8,30 @@ interface PDFViewerProps {
 }
 
 export function PDFViewer({ currentText, currentPage, totalPages, currentSentence }: PDFViewerProps) {
+  const { state, dispatch } = usePDF();
   const sentences = currentText.match(/[^.!?]+[.!?]+/g) || [currentText];
-  const isEvenPage = currentPage % 2 === 0;
+  
+  // Sol sayfa için metin (tek numaralı sayfalar)
+  const leftPageText = state.pagesText[currentPage - 1] || '';
+  const leftPageSentences = leftPageText.match(/[^.!?]+[.!?]+/g) || [leftPageText];
+  
+  // Sağ sayfa için metin (çift numaralı sayfalar)
+  const rightPageText = state.pagesText[currentPage] || '';
+  const rightPageSentences = rightPageText.match(/[^.!?]+[.!?]+/g) || [rightPageText];
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      dispatch({ type: 'SET_PAGE', payload: { current: currentPage - 1, total: totalPages } });
+      dispatch({ type: 'SET_TEXT', payload: state.pagesText[currentPage - 2] || '' });
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      dispatch({ type: 'SET_PAGE', payload: { current: currentPage + 1, total: totalPages } });
+      dispatch({ type: 'SET_TEXT', payload: state.pagesText[currentPage] || '' });
+    }
+  };
 
   return (
     <div className="book-container">
@@ -16,72 +40,83 @@ export function PDFViewer({ currentText, currentPage, totalPages, currentSentenc
           <div className="book-spine"></div>
           <div className="book-pages">
             {/* Sol Sayfa */}
-            <div className={`book-page left-page ${isEvenPage ? 'even' : 'odd'}`}>
+            <div className="book-page left-page">
               <div className="page-header">
                 <div className="page-number">
-                  <span className="current-page">{isEvenPage ? currentPage - 1 : currentPage}</span>
+                  <span className="current-page">{currentPage}</span>
                 </div>
               </div>
               <div className="text-content">
-                {isEvenPage ? (
-                  <div className="page-placeholder">Önceki sayfa</div>
-                ) : (
-                  sentences.map((sentence, index) => {
-                    const trimmedSentence = sentence.trim();
-                    const isCurrentSentence = trimmedSentence === currentSentence;
-                    return (
-                      <span
-                        key={index}
-                        className={`sentence ${isCurrentSentence ? 'current' : ''}`}
-                      >
-                        {trimmedSentence}
-                        {index < sentences.length - 1 ? '. ' : ''}
-                      </span>
-                    );
-                  })
-                )}
+                {leftPageSentences.map((sentence, index) => {
+                  const trimmedSentence = sentence.trim();
+                  const isCurrentSentence = trimmedSentence === currentSentence;
+                  return (
+                    <span
+                      key={index}
+                      className={`sentence ${isCurrentSentence ? 'current' : ''}`}
+                    >
+                      {trimmedSentence}
+                      {index < leftPageSentences.length - 1 ? '. ' : ''}
+                    </span>
+                  );
+                })}
               </div>
             </div>
 
             {/* Sağ Sayfa */}
-            <div className={`book-page right-page ${isEvenPage ? 'odd' : 'even'}`}>
+            <div className="book-page right-page">
               <div className="page-header">
                 <div className="page-number">
-                  <span className="current-page">{isEvenPage ? currentPage : currentPage + 1}</span>
+                  <span className="current-page">{currentPage + 1}</span>
                 </div>
               </div>
               <div className="text-content">
-                {isEvenPage ? (
-                  sentences.map((sentence, index) => {
-                    const trimmedSentence = sentence.trim();
-                    const isCurrentSentence = trimmedSentence === currentSentence;
-                    return (
-                      <span
-                        key={index}
-                        className={`sentence ${isCurrentSentence ? 'current' : ''}`}
-                      >
-                        {trimmedSentence}
-                        {index < sentences.length - 1 ? '. ' : ''}
-                      </span>
-                    );
-                  })
-                ) : (
-                  <div className="page-placeholder">Sonraki sayfa</div>
-                )}
+                {rightPageSentences.map((sentence, index) => {
+                  const trimmedSentence = sentence.trim();
+                  const isCurrentSentence = trimmedSentence === currentSentence;
+                  return (
+                    <span
+                      key={index}
+                      className={`sentence ${isCurrentSentence ? 'current' : ''}`}
+                    >
+                      {trimmedSentence}
+                      {index < rightPageSentences.length - 1 ? '. ' : ''}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Sayfa Geçiş Butonları */}
+      <div className="page-navigation">
+        <button 
+          className="nav-button prev" 
+          onClick={handlePrevPage}
+          disabled={currentPage <= 1}
+        >
+          ← Önceki
+        </button>
+        <div className="page-info">
+          Sayfa {currentPage} / {totalPages}
+        </div>
+        <button 
+          className="nav-button next" 
+          onClick={handleNextPage}
+          disabled={currentPage >= totalPages}
+        >
+          Sonraki →
+        </button>
+      </div>
+
       <div className="book-progress">
         <div className="progress-bar">
           <div 
             className="progress-fill" 
             style={{ width: `${(currentPage / totalPages) * 100}%` }}
           ></div>
-        </div>
-        <div className="progress-text">
-          Sayfa {currentPage} / {totalPages}
         </div>
       </div>
     </div>

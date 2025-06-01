@@ -11,6 +11,7 @@ interface PDFState {
   selectedVoice: string;
   isPlaying: boolean;
   isPaused: boolean;
+  pagesText: string[];
 }
 
 type PDFAction =
@@ -21,7 +22,8 @@ type PDFAction =
   | { type: 'SET_VOICES'; payload: SpeechSynthesisVoice[] }
   | { type: 'SET_SELECTED_VOICE'; payload: string }
   | { type: 'SET_PLAYING'; payload: boolean }
-  | { type: 'SET_PAUSED'; payload: boolean };
+  | { type: 'SET_PAUSED'; payload: boolean }
+  | { type: 'SET_PAGES_TEXT'; payload: string[] };
 
 const initialState: PDFState = {
   currentText: '',
@@ -33,6 +35,7 @@ const initialState: PDFState = {
   selectedVoice: '',
   isPlaying: false,
   isPaused: false,
+  pagesText: [],
 };
 
 function pdfReducer(state: PDFState, action: PDFAction): PDFState {
@@ -53,6 +56,8 @@ function pdfReducer(state: PDFState, action: PDFAction): PDFState {
       return { ...state, isPlaying: action.payload };
     case 'SET_PAUSED':
       return { ...state, isPaused: action.payload };
+    case 'SET_PAGES_TEXT':
+      return { ...state, pagesText: action.payload };
     default:
       return state;
   }
