@@ -1,0 +1,264 @@
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(135deg, #1a1c2e 0%, #2d3748 100%);
+  padding: 20px;
+  color: #e2e8f0;
+}
+
+.container {
+  width: 100%;
+  max-width: 800px;
+  text-align: center;
+}
+
+h1 {
+  color: #e2e8f0;
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.upload-area {
+  background: rgba(45, 55, 72, 0.7);
+  border: 2px dashed #4a5568;
+  border-radius: 12px;
+  padding: 40px 20px;
+  margin: 20px 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upload-area:hover {
+  border-color: #e2e8f0;
+  background: rgba(45, 55, 72, 0.9);
+}
+
+.upload-area p {
+  color: #e2e8f0;
+  font-size: 1.1rem;
+  margin: 10px 0 0;
+}
+
+.controls {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: white;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.play {
+  background-color: #48bb78;
+}
+
+.play:hover:not(:disabled) {
+  background-color: #38a169;
+}
+
+.pause {
+  background-color: #ecc94b;
+  color: #2d3748;
+}
+
+.pause:hover:not(:disabled) {
+  background-color: #d69e2e;
+}
+
+.stop {
+  background-color: #f56565;
+}
+
+.stop:hover:not(:disabled) {
+  background-color: #e53e3e;
+}
+
+.loading {
+  display: none;
+  text-align: center;
+  margin: 20px 0;
+}
+
+.loading.active {
+  display: block;
+}
+
+.spinner {
+  border: 3px solid #4a5568;
+  border-top: 3px solid #e2e8f0;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+select {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px;
+  margin: 20px auto;
+  border-radius: 8px;
+  border: 1px solid #4a5568;
+  background-color: rgba(45, 55, 72, 0.7);
+  color: #e2e8f0;
+  font-size: 1rem;
+  cursor: pointer;
+  display: block;
+}
+
+select:focus {
+  outline: none;
+  border-color: #e2e8f0;
+  box-shadow: 0 0 0 3px rgba(226, 232, 240, 0.1);
+}
+
+.book-card {
+  background: rgba(45, 55, 72, 0.7);
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #4a5568;
+}
+
+.page-info {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #e2e8f0;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #4a5568;
+}
+
+.text-content {
+  flex: 1;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  overflow-y: auto;
+  padding: 16px;
+  background: rgba(26, 32, 44, 0.7);
+  border-radius: 8px;
+  border: 1px solid #4a5568;
+  color: #e2e8f0;
+}
+
+.sentence {
+  display: inline-block;
+  padding: 4px 8px;
+  margin: 2px 0;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.sentence.current {
+  background-color: rgba(74, 85, 104, 0.8);
+  color: #fff;
+  font-weight: 500;
+}
+
+.word {
+  display: inline-block;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  margin: 1px;
+}
+
+.current-word {
+  background-color: #fefcbf;
+  font-weight: 600;
+  color: #744210;
+}
+
+.current-sentence {
+  background-color: #ebf8ff;
+  color: #2c5282;
+}
+
+.current-word.current-sentence {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+/* Scrollbar stilleri */
+.text-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.text-content::-webkit-scrollbar-track {
+  background: rgba(45, 55, 72, 0.7);
+  border-radius: 4px;
+}
+
+.text-content::-webkit-scrollbar-thumb {
+  background: #4a5568;
+  border-radius: 4px;
+}
+
+.text-content::-webkit-scrollbar-thumb:hover {
+  background: #2d3748;
+}
+
+/* Responsive tasarım */
+@media (max-width: 640px) {
+  .container {
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  .upload-area {
+    padding: 30px 15px;
+  }
+
+  .controls {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .book-card {
+    padding: 16px;
+  }
+
+  .text-content {
+    padding: 12px;
+    font-size: 1rem;
+  }
+}
