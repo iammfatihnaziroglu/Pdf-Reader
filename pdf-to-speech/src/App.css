@@ -1,13 +1,18 @@
+/* Modern ve Şık Tasarım - Tüm Cihazlar */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Genel Stiller */
 body {
-  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   margin: 0;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #1a1f2c 0%, #2c3e50 100%);
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
   padding: 1rem;
-  color: #e2e8f0;
+  color: #f8fafc;
+  overflow-x: hidden;
 }
 
 .container {
@@ -17,42 +22,45 @@ body {
   padding: 1rem;
 }
 
+/* Modern Başlık */
 h1 {
-  color: #e2e8f0;
-  font-size: 2rem;
-  margin-bottom: 1.2rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  color: #f8fafc;
+  font-size: 2.5rem;
+  margin-bottom: 2rem;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
   font-weight: 700;
-  letter-spacing: -0.5px;
-  background: linear-gradient(120deg, #e2e8f0, #90cdf4);
+  letter-spacing: -1px;
+  background: linear-gradient(135deg, #f8fafc, #cbd5e1, #94a3b8);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   position: relative;
   display: inline-block;
-  font-family: 'Poppins', sans-serif;
 }
 
 h1::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: -8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 50px;
-  height: 3px;
-  background: linear-gradient(90deg, #4299e1, #90cdf4);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
   border-radius: 2px;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
 }
 
+/* Modern Yükleme Alanı */
 .upload-area {
-  background: rgba(26, 32, 44, 0.8);
-  border: 2px dashed #4a5568;
-  border-radius: 16px;
-  padding: 2.5rem 2rem;
-  margin: 1.5rem 0;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px dashed #475569;
+  border-radius: 20px;
+  padding: 3rem 2rem;
+  margin: 2rem 0;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   position: relative;
   overflow: hidden;
 }
@@ -64,16 +72,16 @@ h1::after {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, rgba(66, 153, 225, 0.1), transparent);
+  background: linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
 }
 
 .upload-area:hover {
-  border-color: #4299e1;
-  background: rgba(26, 32, 44, 0.9);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  transform: translateY(-2px);
+  border-color: #3b82f6;
+  background: rgba(30, 41, 59, 0.9);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.2);
+  transform: translateY(-4px);
 }
 
 .upload-area:hover::before {
@@ -81,37 +89,41 @@ h1::after {
 }
 
 .upload-area p {
-  color: #a0aec0;
-  font-size: 1.1rem;
+  color: #cbd5e1;
+  font-size: 1.2rem;
   margin: 1rem 0 0;
   font-weight: 500;
+  position: relative;
+  z-index: 1;
 }
 
+/* Modern Kontroller */
 .controls {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   justify-content: center;
-  margin: 1.5rem 0;
+  margin: 2rem 0;
   flex-wrap: wrap;
 }
 
 button {
-  padding: 0.8rem 1.5rem;
+  padding: 1rem 2rem;
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
   color: white;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  min-width: 120px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  min-width: 140px;
   justify-content: center;
   position: relative;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 button::before {
@@ -123,556 +135,79 @@ button::before {
   height: 100%;
   background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
   transform: translateX(-100%);
-  transition: transform 0.3s ease;
+  transition: transform 0.6s ease;
 }
 
 button:hover::before {
   transform: translateX(100%);
 }
 
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
 .play {
-  background: linear-gradient(135deg, #2f855a, #276749);
+  background: linear-gradient(135deg, #10b981, #059669);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
+}
+
+.play:hover {
+  box-shadow: 0 12px 32px rgba(16, 185, 129, 0.4);
 }
 
 .pause {
-  background: linear-gradient(135deg, #b7791f, #975a16);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.3);
+}
+
+.pause:hover {
+  box-shadow: 0 12px 32px rgba(245, 158, 11, 0.4);
 }
 
 .stop {
-  background: linear-gradient(135deg, #c53030, #9b2c2c);
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
 }
 
-.loading {
-  display: none;
-  text-align: center;
-  margin: 20px 0;
+.stop:hover {
+  box-shadow: 0 12px 32px rgba(239, 68, 68, 0.4);
 }
 
-.loading.active {
-  display: block;
-}
-
-.spinner {
-  border: 3px solid #4a5568;
-  border-top: 3px solid #e2e8f0;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  animation: spin 1s linear infinite;
-  margin: 0 auto;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
+/* Modern Select */
 select {
   width: 100%;
-  max-width: 400px;
-  padding: 12px;
-  margin: 20px auto;
-  border-radius: 8px;
-  border: 1px solid #4a5568;
-  background-color: rgba(26, 32, 44, 0.8);
-  color: #a0aec0;
+  max-width: 500px;
+  padding: 1rem 1.5rem;
+  margin: 2rem auto;
+  border-radius: 16px;
+  border: 2px solid #475569;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  color: #cbd5e1;
   font-size: 1rem;
+  font-weight: 500;
   cursor: pointer;
   display: block;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 select:focus {
   outline: none;
-  border-color: #718096;
-  box-shadow: 0 0 0 3px rgba(113, 128, 150, 0.2);
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+  background: rgba(30, 41, 59, 0.9);
 }
 
-.book-card {
-  background: rgba(45, 55, 72, 0.7);
-  border-radius: 12px;
-  padding: 24px;
-  margin-top: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  min-height: 300px;
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #4a5568;
-}
-
-.page-info {
-  text-align: center;
-  font-size: 0.9rem;
-  color: #e2e8f0;
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #4a5568;
-}
-
-.text-content {
-  flex: 1;
-  line-height: 1.8;
-  font-size: 1.1rem;
-  overflow-y: auto;
-  padding: 16px;
-  background: #23283a;
-  border-radius: 8px;
-  border: 1px solid #4a5568;
-  color: #e2e8f0;
-}
-
-.sentence {
-  display: inline;
-  padding: 2px 4px;
-  border-radius: 3px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  position: relative;
-}
-
-.sentence:hover {
-  background: rgba(66, 153, 225, 0.1);
-  color: #90cdf4;
-}
-
-.sentence.hovered {
-  background: rgba(66, 153, 225, 0.15);
-  color: #90cdf4;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.sentence.current {
-  background: rgba(66, 153, 225, 0.2);
-  color: #90cdf4;
-  font-weight: 500;
-}
-
-.sentence::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  background: rgba(66, 153, 225, 0.3);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.sentence:hover::after,
-.sentence.hovered::after {
-  transform: scaleX(1);
-}
-
-.sentence:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-.word {
-  display: inline-block;
-  padding: 2px 4px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  margin: 1px;
-}
-
-.current-word {
-  background-color: #fefcbf;
-  font-weight: 600;
-  color: #744210;
-}
-
-.current-sentence {
-  background-color: #ebf8ff;
-  color: #2c5282;
-}
-
-.current-word.current-sentence {
-  background-color: #fef3c7;
-  color: #92400e;
-}
-
-/* Scrollbar stilleri */
-.text-content::-webkit-scrollbar {
-  width: 8px;
-}
-
-.text-content::-webkit-scrollbar-track {
-  background: #23283a;
-  border-radius: 4px;
-}
-
-.text-content::-webkit-scrollbar-thumb {
-  background: #2d3748;
-  border-radius: 4px;
-}
-
-.text-content::-webkit-scrollbar-thumb:hover {
-  background: #4a5568;
-}
-
-/* Responsive tasarım */
-@media (max-width: 1024px) {
-  .book {
-    height: 500px;
-  }
-
-  .book-page {
-    padding: 1rem;
-  }
-
-  h1 {
-    font-size: 1.8rem;
-  }
-
-  h1::after {
-    width: 45px;
-  }
-
-  .upload-area {
-    padding: 2rem 1.5rem;
-  }
-}
-
-/* Mobil Görünüm - Sayfalar Yan Yana ve Küçük Butonlar */
-@media (max-width: 768px) {
-  body {
-    padding: 0.3rem;
-    background: linear-gradient(135deg, #1a1f2c 0%, #2c3e50 100%);
-  }
-
-  .container {
-    padding: 0;
-    max-width: 100%;
-  }
-
-  h1 {
-    font-size: 1.2rem;
-    margin-bottom: 0.8rem;
-    text-align: center;
-  }
-
-  h1::after {
-    width: 35px;
-    height: 2px;
-  }
-
-  .upload-area {
-    padding: 1rem 0.8rem;
-    margin: 0.8rem 0;
-    border-radius: 10px;
-    text-align: center;
-  }
-
-  .upload-area p {
-    font-size: 0.85rem;
-    margin: 0.4rem 0;
-  }
-
-  .controls {
-    display: flex;
-    flex-direction: row;
-    gap: 0.3rem;
-    margin: 0.8rem 0;
-    justify-content: center;
-  }
-
-  button {
-    flex: 1;
-    padding: 0.5rem 0.3rem;
-    font-size: 0.75rem;
-    min-width: 60px;
-    max-width: 90px;
-    border-radius: 6px;
-    white-space: nowrap;
-  }
-
-  select {
-    width: 100%;
-    padding: 0.6rem;
-    font-size: 0.8rem;
-    margin: 0.8rem 0;
-    border-radius: 6px;
-  }
-
-  .book-container {
-    margin: 0.8rem 0;
-    padding: 0;
-  }
-
-  .book {
-    height: 400px;
-    transform: none;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  }
-
-  .book-pages {
-    flex-direction: row;
-    height: 100%;
-  }
-
-  .book-page {
-    width: 50%;
-    height: 100%;
-    padding: 0.8rem;
-    overflow-y: auto;
-  }
-
-  .left-page {
-    border-right: 1px solid #2d3748;
-    border-radius: 8px 0 0 8px;
-  }
-
-  .right-page {
-    border-left: 1px solid #2d3748;
-    border-radius: 0 8px 8px 0;
-  }
-
-  .page-header {
-    padding-bottom: 0.4rem;
-    margin-bottom: 0.4rem;
-    border-bottom: 1px solid #2d3748;
-  }
-
-  .page-number {
-    font-size: 0.75rem;
-    color: #90cdf4;
-  }
-
-  .text-content {
-    font-size: 0.8rem;
-    line-height: 1.5;
-    padding: 0;
-    height: calc(100% - 2.5rem);
-    overflow-y: auto;
-  }
-
-  .sentence {
-    padding: 1px 3px;
-    font-size: 0.8rem;
-    margin: 0.1rem 0;
-    border-radius: 2px;
-    cursor: pointer;
-  }
-
-  .page-navigation {
-    display: flex;
-    flex-direction: row;
-    gap: 0.3rem;
-    padding: 0.4rem;
-    margin: 0.8rem 0;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .nav-button {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.7rem;
-    min-width: 60px;
-    flex: none;
-  }
-
-  .page-info {
-    font-size: 0.7rem;
-    padding: 0.4rem 0.6rem;
-    background: rgba(45, 55, 72, 0.8);
-    border-radius: 4px;
-    min-width: 80px;
-    text-align: center;
-  }
-
-  .book-progress {
-    margin: 0.8rem 0;
-    padding: 0 0.4rem;
-  }
-
-  .progress-bar {
-    height: 3px;
-    border-radius: 2px;
-  }
-
-  .progress-text {
-    font-size: 0.7rem;
-    margin-top: 0.4rem;
-  }
-
-  .book-placeholder {
-    padding: 0.8rem;
-    text-align: center;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  .book-placeholder-title {
-    font-size: 1rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .book-placeholder-text {
-    font-size: 0.8rem;
-    line-height: 1.4;
-    margin-bottom: 0.8rem;
-  }
-
-  .book-placeholder-contact {
-    margin-top: auto;
-    padding-top: 0.8rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  .book-placeholder-credit {
-    font-size: 0.8rem;
-    margin-bottom: 0.6rem;
-  }
-
-  .book-placeholder-links {
-    display: flex;
-    gap: 0.3rem;
-    justify-content: center;
-  }
-
-  .book-placeholder-link {
-    font-size: 0.7rem;
-    padding: 0.3rem 0.5rem;
-    min-width: 50px;
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  body {
-    padding: 0.2rem;
-  }
-
-  h1 {
-    font-size: 1rem;
-    margin-bottom: 0.6rem;
-  }
-
-  h1::after {
-    width: 30px;
-  }
-
-  .upload-area {
-    padding: 0.8rem 0.6rem;
-    margin: 0.6rem 0;
-  }
-
-  .upload-area p {
-    font-size: 0.8rem;
-  }
-
-  .controls {
-    gap: 0.2rem;
-  }
-
-  button {
-    padding: 0.4rem 0.2rem;
-    font-size: 0.7rem;
-    min-width: 50px;
-    max-width: 80px;
-  }
-
-  select {
-    padding: 0.5rem;
-    font-size: 0.75rem;
-  }
-
-  .book {
-    height: 350px;
-  }
-
-  .book-pages {
-    flex-direction: row;
-  }
-
-  .book-page {
-    width: 50%;
-    height: 100%;
-    padding: 0.6rem;
-  }
-
-  .left-page {
-    border-right: 1px solid #2d3748;
-    border-radius: 6px 0 0 6px;
-  }
-
-  .right-page {
-    border-left: 1px solid #2d3748;
-    border-radius: 0 6px 6px 0;
-  }
-
-  .text-content {
-    font-size: 0.75rem;
-    height: calc(100% - 2rem);
-  }
-
-  .sentence {
-    font-size: 0.75rem;
-  }
-
-  .page-navigation {
-    gap: 0.2rem;
-  }
-
-  .nav-button {
-    padding: 0.3rem 0.4rem;
-    font-size: 0.65rem;
-    min-width: 50px;
-  }
-
-  .page-info {
-    font-size: 0.65rem;
-    padding: 0.3rem 0.4rem;
-    min-width: 70px;
-  }
-
-  .book-placeholder-title {
-    font-size: 0.9rem;
-  }
-
-  .book-placeholder-text {
-    font-size: 0.75rem;
-  }
-
-  .book-placeholder-link {
-    font-size: 0.65rem;
-    padding: 0.25rem 0.4rem;
-    min-width: 45px;
-  }
-}
-
-/* Yatay Ekran için Özel Düzenlemeler */
-@media (max-height: 600px) and (orientation: landscape) {
-  .book {
-    height: 300px;
-  }
-
-  .book-page {
-    padding: 0.5rem;
-  }
-
-  .book-placeholder-title {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .book-placeholder-text {
-    font-size: 0.8rem;
-  }
-
-  .book-placeholder-contact {
-    padding-top: 0.5rem;
-  }
-}
-
+/* Modern Kitap Görünümü */
 .book-container {
-  perspective: 1500px;
-  margin: 1rem auto;
+  perspective: 2000px;
+  margin: 2rem auto;
   max-width: 1200px;
   padding: 0 1rem;
 }
@@ -680,10 +215,11 @@ select:focus {
 .book {
   position: relative;
   width: 100%;
-  height: 600px;
+  height: 700px;
   transform-style: preserve-3d;
-  transform: rotateX(10deg);
-  transition: transform 0.5s;
+  transform: rotateX(5deg);
+  transition: transform 0.6s ease;
+  filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
 }
 
 .book:hover {
@@ -694,9 +230,9 @@ select:focus {
   position: relative;
   width: 100%;
   height: 100%;
-  background: #1a1f2c;
-  border-radius: 4px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  background: linear-gradient(135deg, #1e293b, #334155);
+  border-radius: 12px;
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.2);
   transform-style: preserve-3d;
   transform: translateZ(0);
 }
@@ -705,12 +241,13 @@ select:focus {
   position: absolute;
   left: 0;
   top: 0;
-  width: 50px;
+  width: 60px;
   height: 100%;
-  background: #141923;
-  transform: rotateY(90deg) translateZ(-25px);
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  transform: rotateY(90deg) translateZ(-30px);
   transform-origin: 0 50%;
-  box-shadow: inset -5px 0 15px rgba(0, 0, 0, 0.1);
+  box-shadow: inset -10px 0 20px rgba(0, 0, 0, 0.2);
+  border-radius: 0 8px 8px 0;
 }
 
 .book-pages {
@@ -718,248 +255,207 @@ select:focus {
   width: 100%;
   height: 100%;
   display: flex;
-  background: #23283a;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  border-radius: 12px;
   overflow: hidden;
+  backdrop-filter: blur(10px);
 }
 
 .book-page {
   position: relative;
   width: 50%;
   height: 100%;
-  padding: 1.5rem;
-  background: #1a1f2c;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-  transition: all 0.3s ease;
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #1e293b, #334155);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.2);
+  transition: all 0.4s ease;
   overflow-y: auto;
+  backdrop-filter: blur(10px);
 }
 
 .left-page {
-  border-right: 1px solid #2d3748;
-  border-radius: 8px 0 0 8px;
+  border-right: 2px solid #475569;
+  border-radius: 12px 0 0 12px;
 }
 
 .right-page {
-  border-left: 1px solid #2d3748;
-  border-radius: 0 8px 8px 0;
+  border-left: 2px solid #475569;
+  border-radius: 0 12px 12px 0;
+}
+
+.book-page:hover {
+  background: linear-gradient(135deg, #334155, #475569);
 }
 
 .page-header {
   position: relative;
-  padding-bottom: 1rem;
-  margin-bottom: 1rem;
-  border-bottom: 1px solid #2d3748;
+  padding-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #475569;
 }
 
 .page-number {
   position: absolute;
   right: 0;
   top: 0;
-  font-size: 0.9rem;
-  color: #718096;
-  font-family: 'Georgia', serif;
+  font-size: 1rem;
+  color: #3b82f6;
+  font-family: 'Inter', serif;
+  font-weight: 600;
 }
 
 .current-page {
-  font-weight: 600;
-  color: #90cdf4;
+  font-weight: 700;
+  color: #06b6d4;
+  text-shadow: 0 2px 4px rgba(6, 182, 212, 0.3);
 }
 
 .text-content {
-  height: calc(100% - 4rem);
+  height: calc(100% - 5rem);
   overflow-y: auto;
   padding-right: 1rem;
-  font-family: 'Georgia', serif;
+  font-family: 'Inter', serif;
   font-size: 1.1rem;
   line-height: 1.8;
-  color: #e2e8f0;
-  background: #23283a;
+  color: #f8fafc;
+  background: transparent;
 }
 
-.page-placeholder {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  color: #7b8191;
-  font-style: italic;
+/* Modern Cümle Stilleri */
+.sentence {
+  display: inline;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  position: relative;
+  margin: 2px;
 }
 
-.book-progress {
-  margin-top: 1rem;
-  padding: 0 1rem;
+.sentence:hover {
+  background: rgba(59, 130, 246, 0.2);
+  color: #93c5fd;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-.progress-bar {
-  height: 4px;
-  background: #2d3748;
-  border-radius: 2px;
-  overflow: hidden;
-  margin-bottom: 0.5rem;
+.sentence.hovered {
+  background: rgba(59, 130, 246, 0.25);
+  color: #93c5fd;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3);
 }
 
-.progress-fill {
-  height: 100%;
-  background: #4299e1;
-  transition: width 0.3s ease;
+.sentence.current {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+  color: #93c5fd;
+  font-weight: 600;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.4);
 }
 
-.progress-text {
-  text-align: center;
-  color: #90cdf4;
-  font-size: 0.9rem;
-}
-
-/* Scrollbar stilleri */
-.text-content::-webkit-scrollbar-track {
-  background: #1a1f2c;
-}
-
-.text-content::-webkit-scrollbar-thumb {
-  background: #2d3748;
-}
-
-.text-content::-webkit-scrollbar-thumb:hover {
-  background: #4a5568;
-}
-
-/* Sayfa geçiş animasyonu */
-.book-page:hover {
-  background: #23283a;
-}
-
-/* Metin seçimi */
-.text-content ::selection {
-  background: rgba(66, 153, 225, 0.2);
-  color: #e2e8f0;
-}
-
-/* Sayfa kenarları */
-.book-page::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 30px;
-  background: linear-gradient(to bottom, rgba(66, 153, 225, 0.05), transparent);
-  pointer-events: none;
-}
-
-.book-page::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 30px;
-  background: linear-gradient(to top, rgba(66, 153, 225, 0.05), transparent);
-  pointer-events: none;
-}
-
-/* Sayfa Geçiş Butonları */
+/* Modern Sayfa Geçişi */
 .page-navigation {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-  padding: 0.5rem;
-  background: rgba(26, 32, 44, 0.8);
-  border-radius: 8px;
-  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding: 1rem;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .nav-button {
-  padding: 0.5rem 1rem;
-  min-width: 100px;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #475569, #64748b);
+  color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 120px;
+  justify-content: center;
+}
+
+.nav-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.nav-button:disabled {
+  background: linear-gradient(135deg, #374151, #4b5563);
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .page-info {
-  color: #e2e8f0;
-  font-weight: 500;
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  background: rgba(45, 55, 72, 0.8);
-  border-radius: 4px;
-  min-width: 100px;
+  color: #f8fafc;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  min-width: 120px;
   text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
-/* Kitap Kapağı ve Sayfa Başlıkları */
-.book-cover {
-  background: #1a1f2c;
+/* Modern İlerleme Çubuğu */
+.book-progress {
+  margin-top: 2rem;
+  padding: 0 1rem;
 }
 
-.book-spine {
-  background: #141923;
-}
-
-.page-header {
-  border-bottom: 1px solid #2d3748;
-}
-
-.page-number {
-  color: #718096;
-}
-
-.current-page {
-  color: #90cdf4;
-}
-
-/* İlerleme Çubuğu */
 .progress-bar {
-  background: #2d3748;
+  height: 6px;
+  background: rgba(71, 85, 105, 0.5);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .progress-fill {
-  background: #4299e1;
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
 }
 
-/* Scrollbar */
-.text-content::-webkit-scrollbar-track {
-  background: #1a1f2c;
+.progress-text {
+  text-align: center;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
-.text-content::-webkit-scrollbar-thumb {
-  background: #2d3748;
-}
-
-.text-content::-webkit-scrollbar-thumb:hover {
-  background: #4a5568;
-}
-
-/* Sayfa Kenarları */
-.book-page::before {
-  background: linear-gradient(to bottom, rgba(66, 153, 225, 0.05), transparent);
-}
-
-.book-page::after {
-  background: linear-gradient(to top, rgba(66, 153, 225, 0.05), transparent);
-}
-
-/* Metin Seçimi */
-.text-content ::selection {
-  background: rgba(66, 153, 225, 0.2);
-  color: #e2e8f0;
-}
-
+/* Modern Placeholder */
 .book-placeholder {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  padding: 1.5rem;
-  background: linear-gradient(135deg, rgba(26, 32, 44, 0.95) 0%, rgba(45, 55, 72, 0.95) 100%);
-  border-radius: 8px;
-  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 100%);
+  border-radius: 12px;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .book-placeholder-content {
   text-align: center;
-  color: #a0aec0;
-  font-family: 'Georgia', serif;
-  line-height: 1.6;
+  color: #cbd5e1;
+  font-family: 'Inter', serif;
+  line-height: 1.7;
   font-size: 1rem;
   max-width: 90%;
   margin: 0 auto;
@@ -967,41 +463,46 @@ select:focus {
 }
 
 .book-placeholder-title {
-  font-size: 1.6rem;
-  font-weight: 600;
-  color: #e2e8f0;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 1.5rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .book-placeholder-text-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 50px;
-  margin-bottom: 1rem;
+  min-height: 80px;
+  margin-bottom: 1.5rem;
 }
 
 .book-placeholder-text {
-  color: #cbd5e0;
-  font-size: 1rem;
-  line-height: 1.6;
+  color: #e2e8f0;
+  font-size: 1.1rem;
+  line-height: 1.7;
   max-width: 90%;
   margin: 0 auto;
+  font-weight: 400;
 }
 
 .book-placeholder-contact {
   margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1.5rem;
+  border-top: 2px solid rgba(255, 255, 255, 0.1);
   text-align: center;
 }
 
 .book-placeholder-credit {
-  font-size: 1rem;
-  color: #e2e8f0;
+  font-size: 1.1rem;
+  color: #f8fafc;
   margin-bottom: 1rem;
-  font-weight: 500;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .book-placeholder-links {
@@ -1014,56 +515,327 @@ select:focus {
 
 .book-placeholder-link {
   display: inline-block;
-  color: #a0aec0;
+  color: #cbd5e1;
   text-decoration: none;
-  font-size: 0.9rem;
-  padding: 0.4rem 0.8rem;
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.05);
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  min-width: 80px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(139, 92, 246, 0.2));
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 100px;
   text-align: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.3);
 }
 
 .book-placeholder-link:hover {
-  color: #e2e8f0;
-  background: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: #f8fafc;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.4), rgba(139, 92, 246, 0.4));
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Scrollbar Stilleri */
+.text-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.text-content::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 4px;
+}
+
+.text-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #475569, #64748b);
+  border-radius: 4px;
+}
+
+.text-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+/* Metin Seçimi */
+.text-content ::selection {
+  background: rgba(59, 130, 246, 0.3);
+  color: #f8fafc;
+}
+
+/* Sayfa Kenarları */
+.book-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, rgba(59, 130, 246, 0.1), transparent);
+  pointer-events: none;
+  border-radius: 12px 12px 0 0;
+}
+
+.book-page::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to top, rgba(59, 130, 246, 0.1), transparent);
+  pointer-events: none;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Responsive Tasarım - Modern */
+@media (max-width: 1024px) {
+  h1 {
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  h1::after {
+    width: 70px;
+  }
+
+  .upload-area {
+    padding: 2.5rem 1.5rem;
+  }
+
+  .book {
+    height: 600px;
+  }
+
+  .book-page {
+    padding: 2rem;
+  }
 }
 
 @media (max-width: 768px) {
-  .book-placeholder {
-    padding: 1rem;
+  body {
+    padding: 0.5rem;
+  }
+
+  .container {
+    padding: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 1.2rem;
+  }
+
+  h1::after {
+    width: 60px;
+    height: 3px;
+  }
+
+  .upload-area {
+    padding: 2rem 1.5rem;
+    margin: 1.5rem 0;
+    border-radius: 16px;
+  }
+
+  .upload-area p {
+    font-size: 1rem;
+  }
+
+  .controls {
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  button {
+    padding: 0.8rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: 120px;
+    border-radius: 12px;
+  }
+
+  select {
+    padding: 0.8rem 1.2rem;
+    font-size: 0.9rem;
+    border-radius: 12px;
+  }
+
+  .book {
+    height: 500px;
+  }
+
+  .book-pages {
+    flex-direction: row;
+  }
+
+  .book-page {
+    width: 50%;
+    padding: 1.5rem;
+  }
+
+  .text-content {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .sentence {
+    padding: 3px 6px;
+    font-size: 1rem;
+  }
+
+  .page-navigation {
+    gap: 1rem;
+    padding: 0.8rem;
+    margin: 1.5rem 0;
+  }
+
+  .nav-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+    min-width: 100px;
+  }
+
+  .page-info {
+    font-size: 0.85rem;
+    padding: 0.6rem 1.2rem;
+    min-width: 100px;
   }
 
   .book-placeholder-title {
-    font-size: 1.4rem;
-    margin-bottom: 0.8rem;
+    font-size: 1.5rem;
+  }
+
+  .book-placeholder-text {
+    font-size: 1rem;
+  }
+
+  .book-placeholder-link {
+    font-size: 0.85rem;
+    padding: 0.6rem 1.2rem;
+    min-width: 90px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 0.3rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  h1::after {
+    width: 50px;
+    height: 2px;
+  }
+
+  .upload-area {
+    padding: 1.5rem 1rem;
+    margin: 1rem 0;
+    border-radius: 12px;
+  }
+
+  .upload-area p {
+    font-size: 0.9rem;
+  }
+
+  .controls {
+    flex-direction: column;
+    gap: 0.8rem;
+    margin: 1rem 0;
+  }
+
+  button {
+    width: 100%;
+    padding: 0.8rem;
+    font-size: 0.85rem;
+    min-width: auto;
+    border-radius: 10px;
+  }
+
+  select {
+    padding: 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 10px;
+  }
+
+  .book {
+    height: 400px;
+  }
+
+  .book-pages {
+    flex-direction: column;
+  }
+
+  .book-page {
+    width: 100%;
+    height: 50%;
+    padding: 1rem;
+  }
+
+  .left-page {
+    border-right: none;
+    border-bottom: 2px solid #475569;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .right-page {
+    border-left: none;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .text-content {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .sentence {
+    padding: 2px 4px;
+    font-size: 0.9rem;
+  }
+
+  .page-navigation {
+    flex-direction: column;
+    gap: 0.6rem;
+    padding: 0.6rem;
+    margin: 1rem 0;
+  }
+
+  .nav-button {
+    width: 100%;
+    padding: 0.7rem;
+    font-size: 0.8rem;
+    min-width: auto;
+  }
+
+  .page-info {
+    width: 100%;
+    font-size: 0.8rem;
+    padding: 0.7rem;
+  }
+
+  .book-placeholder {
+    padding: 1.5rem;
+  }
+
+  .book-placeholder-title {
+    font-size: 1.3rem;
+    margin-bottom: 1rem;
   }
 
   .book-placeholder-text {
     font-size: 0.9rem;
   }
 
-  .book-placeholder-text-container {
-    min-height: 40px;
-    margin-bottom: 0.8rem;
-  }
-
-  .book-placeholder-contact {
-    padding-top: 0.8rem;
-  }
-
   .book-placeholder-links {
-    gap: 0.8rem;
-    padding: 0 0.5rem;
+    flex-direction: column;
+    gap: 0.6rem;
   }
 
   .book-placeholder-link {
-    font-size: 0.85rem;
-    padding: 0.3rem 0.6rem;
-    min-width: 70px;
+    width: 100%;
+    font-size: 0.8rem;
+    padding: 0.6rem;
   }
 }
