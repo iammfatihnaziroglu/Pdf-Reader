@@ -900,10 +900,14 @@ select:focus {
 @media (max-width: 768px) {
   body {
     padding: 0.5rem;
+    overflow-x: hidden;
   }
 
   .container {
     padding: 0.5rem;
+    width: 100%;
+    max-width: 100vw;
+    box-sizing: border-box;
   }
 
   h1 {
@@ -917,9 +921,11 @@ select:focus {
   }
 
   .upload-area {
-    padding: 2rem 1.5rem;
-    margin: 1.5rem 0;
+    padding: 1.5rem 1rem;
+    margin: 1rem 0;
     border-radius: 16px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .upload-area p {
@@ -929,6 +935,8 @@ select:focus {
   .controls {
     gap: 1rem;
     margin: 1.5rem 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   button {
@@ -942,13 +950,19 @@ select:focus {
     padding: 0.8rem 1.2rem;
     font-size: 0.9rem;
     border-radius: 12px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   /* Voice Selector Mobile */
   .voice-selector-container {
     padding: 1.2rem;
-    margin: 1.2rem auto;
+    margin: 1.2rem 0;
     border-radius: 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .selection-title {
@@ -958,12 +972,15 @@ select:focus {
 
   .search-container {
     margin-bottom: 1rem;
+    width: 100%;
   }
 
   .search-input {
     padding: 0.7rem 1rem;
     font-size: 0.9rem;
     border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .search-hint {
@@ -971,17 +988,22 @@ select:focus {
     padding: 0.6rem;
     margin-top: 0.8rem;
     border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .language-grid {
     grid-template-columns: 1fr;
     gap: 0.6rem;
+    width: 100%;
   }
 
   .language-button {
     padding: 0.7rem;
     gap: 0.5rem;
     border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .language-flag {
@@ -1000,15 +1022,19 @@ select:focus {
   .voice-selection {
     margin-top: 1.5rem;
     padding-top: 1.5rem;
+    width: 100%;
   }
 
   .voice-list {
     max-height: 250px;
+    width: 100%;
   }
 
   .voice-button {
     padding: 0.7rem;
     border-radius: 10px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .voice-name {
@@ -1032,6 +1058,8 @@ select:focus {
     padding: 1rem;
     margin-top: 1.2rem;
     border-radius: 12px;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .selection-summary h4 {
@@ -1053,10 +1081,13 @@ select:focus {
 
   .book {
     height: 1200px;
+    width: 100%;
+    max-width: 100%;
   }
 
   .book-pages {
     flex-direction: row;
+    width: 100%;
   }
 
   .book-page {
@@ -1078,6 +1109,8 @@ select:focus {
     gap: 1rem;
     padding: 0.8rem;
     margin: 1.5rem 0;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .nav-button {
@@ -1097,6 +1130,8 @@ select:focus {
     display: flex;
     flex-direction: column;
     height: 100%;
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .book-placeholder-content {
@@ -1143,6 +1178,7 @@ select:focus {
     grid-template-columns: 1fr 1fr;
     gap: 1.2rem;
     justify-items: center;
+    width: 100%;
   }
 
   .book-placeholder-link {
@@ -1151,6 +1187,7 @@ select:focus {
     min-width: 140px;
     width: 100%;
     text-align: center;
+    box-sizing: border-box;
   }
 }
 
