@@ -251,7 +251,7 @@ export function PDFReader() {
 
   return (
     <div className="container">
-      <h1>PDF Sesli Okuyucu</h1>
+      <h1>Sesli PDF Okuyucu</h1>
       
       <PDFUploader onFileSelect={handleFile} isLoading={state.isLoading} />
       

@@ -1,101 +1,145 @@
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   margin: 0;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #1a1f2c 0%, #2c3e50 100%);
-  padding: 20px;
+  padding: 1rem;
   color: #e2e8f0;
 }
 
 .container {
   width: 100%;
-  max-width: 800px;
+  max-width: 1200px;
   text-align: center;
+  padding: 1rem;
 }
 
 h1 {
   color: #e2e8f0;
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
+  font-size: 2rem;
+  margin-bottom: 1.2rem;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  background: linear-gradient(120deg, #e2e8f0, #90cdf4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+  display: inline-block;
+  font-family: 'Poppins', sans-serif;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #4299e1, #90cdf4);
+  border-radius: 2px;
 }
 
 .upload-area {
   background: rgba(26, 32, 44, 0.8);
   border: 2px dashed #4a5568;
-  border-radius: 12px;
-  padding: 40px 20px;
-  margin: 20px 0;
+  border-radius: 16px;
+  padding: 2.5rem 2rem;
+  margin: 1.5rem 0;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.upload-area::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(66, 153, 225, 0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .upload-area:hover {
-  border-color: #718096;
+  border-color: #4299e1;
   background: rgba(26, 32, 44, 0.9);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.upload-area:hover::before {
+  opacity: 1;
 }
 
 .upload-area p {
   color: #a0aec0;
   font-size: 1.1rem;
-  margin: 10px 0 0;
+  margin: 1rem 0 0;
+  font-weight: 500;
 }
 
 .controls {
   display: flex;
-  gap: 12px;
+  gap: 1rem;
   justify-content: center;
-  margin: 20px 0;
+  margin: 1.5rem 0;
+  flex-wrap: wrap;
 }
 
 button {
-  padding: 12px 24px;
+  padding: 0.8rem 1.5rem;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 1rem;
-  transition: all 0.2s ease;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
   color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  min-width: 120px;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
 }
 
-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+
+button:hover::before {
+  transform: translateX(100%);
 }
 
 .play {
-  background-color: #2f855a;
-}
-
-.play:hover:not(:disabled) {
-  background-color: #276749;
+  background: linear-gradient(135deg, #2f855a, #276749);
 }
 
 .pause {
-  background-color: #b7791f;
-  color: #2d3748;
-}
-
-.pause:hover:not(:disabled) {
-  background-color: #975a16;
+  background: linear-gradient(135deg, #b7791f, #975a16);
 }
 
 .stop {
-  background-color: #c53030;
-}
-
-.stop:hover:not(:disabled) {
-  background-color: #9b2c2c;
+  background: linear-gradient(135deg, #c53030, #9b2c2c);
 }
 
 .loading {
@@ -270,41 +314,365 @@ select:focus {
 }
 
 /* Responsive tasarım */
-@media (max-width: 640px) {
-  .container {
-    padding: 10px;
+@media (max-width: 1024px) {
+  .book {
+    height: 500px;
+  }
+
+  .book-page {
+    padding: 1rem;
   }
 
   h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
+  }
+
+  h1::after {
+    width: 45px;
   }
 
   .upload-area {
-    padding: 30px 15px;
+    padding: 2rem 1.5rem;
+  }
+}
+
+/* Mobil Görünüm - Sayfalar Yan Yana ve Küçük Butonlar */
+@media (max-width: 768px) {
+  body {
+    padding: 0.3rem;
+    background: linear-gradient(135deg, #1a1f2c 0%, #2c3e50 100%);
+  }
+
+  .container {
+    padding: 0;
+    max-width: 100%;
+  }
+
+  h1 {
+    font-size: 1.2rem;
+    margin-bottom: 0.8rem;
+    text-align: center;
+  }
+
+  h1::after {
+    width: 35px;
+    height: 2px;
+  }
+
+  .upload-area {
+    padding: 1rem 0.8rem;
+    margin: 0.8rem 0;
+    border-radius: 10px;
+    text-align: center;
+  }
+
+  .upload-area p {
+    font-size: 0.85rem;
+    margin: 0.4rem 0;
   }
 
   .controls {
-    flex-direction: column;
-  }
-
-  button {
-    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 0.3rem;
+    margin: 0.8rem 0;
     justify-content: center;
   }
 
-  .book-card {
-    padding: 16px;
+  button {
+    flex: 1;
+    padding: 0.5rem 0.3rem;
+    font-size: 0.75rem;
+    min-width: 60px;
+    max-width: 90px;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+
+  select {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 0.8rem;
+    margin: 0.8rem 0;
+    border-radius: 6px;
+  }
+
+  .book-container {
+    margin: 0.8rem 0;
+    padding: 0;
+  }
+
+  .book {
+    height: 400px;
+    transform: none;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .book-pages {
+    flex-direction: row;
+    height: 100%;
+  }
+
+  .book-page {
+    width: 50%;
+    height: 100%;
+    padding: 0.8rem;
+    overflow-y: auto;
+  }
+
+  .left-page {
+    border-right: 1px solid #2d3748;
+    border-radius: 8px 0 0 8px;
+  }
+
+  .right-page {
+    border-left: 1px solid #2d3748;
+    border-radius: 0 8px 8px 0;
+  }
+
+  .page-header {
+    padding-bottom: 0.4rem;
+    margin-bottom: 0.4rem;
+    border-bottom: 1px solid #2d3748;
+  }
+
+  .page-number {
+    font-size: 0.75rem;
+    color: #90cdf4;
   }
 
   .text-content {
-    padding: 12px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    padding: 0;
+    height: calc(100% - 2.5rem);
+    overflow-y: auto;
+  }
+
+  .sentence {
+    padding: 1px 3px;
+    font-size: 0.8rem;
+    margin: 0.1rem 0;
+    border-radius: 2px;
+    cursor: pointer;
+  }
+
+  .page-navigation {
+    display: flex;
+    flex-direction: row;
+    gap: 0.3rem;
+    padding: 0.4rem;
+    margin: 0.8rem 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .nav-button {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.7rem;
+    min-width: 60px;
+    flex: none;
+  }
+
+  .page-info {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.6rem;
+    background: rgba(45, 55, 72, 0.8);
+    border-radius: 4px;
+    min-width: 80px;
+    text-align: center;
+  }
+
+  .book-progress {
+    margin: 0.8rem 0;
+    padding: 0 0.4rem;
+  }
+
+  .progress-bar {
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  .progress-text {
+    font-size: 0.7rem;
+    margin-top: 0.4rem;
+  }
+
+  .book-placeholder {
+    padding: 0.8rem;
+    text-align: center;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .book-placeholder-title {
     font-size: 1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .book-placeholder-text {
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin-bottom: 0.8rem;
+  }
+
+  .book-placeholder-contact {
+    margin-top: auto;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .book-placeholder-credit {
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .book-placeholder-links {
+    display: flex;
+    gap: 0.3rem;
+    justify-content: center;
+  }
+
+  .book-placeholder-link {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+    min-width: 50px;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    padding: 0.2rem;
+  }
+
+  h1 {
+    font-size: 1rem;
+    margin-bottom: 0.6rem;
+  }
+
+  h1::after {
+    width: 30px;
+  }
+
+  .upload-area {
+    padding: 0.8rem 0.6rem;
+    margin: 0.6rem 0;
+  }
+
+  .upload-area p {
+    font-size: 0.8rem;
+  }
+
+  .controls {
+    gap: 0.2rem;
+  }
+
+  button {
+    padding: 0.4rem 0.2rem;
+    font-size: 0.7rem;
+    min-width: 50px;
+    max-width: 80px;
+  }
+
+  select {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .book {
+    height: 350px;
+  }
+
+  .book-pages {
+    flex-direction: row;
+  }
+
+  .book-page {
+    width: 50%;
+    height: 100%;
+    padding: 0.6rem;
+  }
+
+  .left-page {
+    border-right: 1px solid #2d3748;
+    border-radius: 6px 0 0 6px;
+  }
+
+  .right-page {
+    border-left: 1px solid #2d3748;
+    border-radius: 0 6px 6px 0;
+  }
+
+  .text-content {
+    font-size: 0.75rem;
+    height: calc(100% - 2rem);
+  }
+
+  .sentence {
+    font-size: 0.75rem;
+  }
+
+  .page-navigation {
+    gap: 0.2rem;
+  }
+
+  .nav-button {
+    padding: 0.3rem 0.4rem;
+    font-size: 0.65rem;
+    min-width: 50px;
+  }
+
+  .page-info {
+    font-size: 0.65rem;
+    padding: 0.3rem 0.4rem;
+    min-width: 70px;
+  }
+
+  .book-placeholder-title {
+    font-size: 0.9rem;
+  }
+
+  .book-placeholder-text {
+    font-size: 0.75rem;
+  }
+
+  .book-placeholder-link {
+    font-size: 0.65rem;
+    padding: 0.25rem 0.4rem;
+    min-width: 45px;
+  }
+}
+
+/* Yatay Ekran için Özel Düzenlemeler */
+@media (max-height: 600px) and (orientation: landscape) {
+  .book {
+    height: 300px;
+  }
+
+  .book-page {
+    padding: 0.5rem;
+  }
+
+  .book-placeholder-title {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .book-placeholder-text {
+    font-size: 0.8rem;
+  }
+
+  .book-placeholder-contact {
+    padding-top: 0.5rem;
   }
 }
 
 .book-container {
   perspective: 1500px;
-  margin: 2rem auto;
+  margin: 1rem auto;
   max-width: 1200px;
   padding: 0 1rem;
 }
@@ -312,7 +680,7 @@ select:focus {
 .book {
   position: relative;
   width: 100%;
-  height: 700px;
+  height: 600px;
   transform-style: preserve-3d;
   transform: rotateX(10deg);
   transition: transform 0.5s;
@@ -359,7 +727,7 @@ select:focus {
   position: relative;
   width: 50%;
   height: 100%;
-  padding: 2rem;
+  padding: 1.5rem;
   background: #1a1f2c;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
   transition: all 0.3s ease;
@@ -489,20 +857,6 @@ select:focus {
   pointer-events: none;
 }
 
-@media (max-width: 768px) {
-  .book {
-    height: 600px;
-  }
-
-  .book-page {
-    padding: 1rem;
-  }
-
-  .text-content {
-    font-size: 1rem;
-  }
-}
-
 /* Sayfa Geçiş Butonları */
 .page-navigation {
   display: flex;
@@ -513,31 +867,12 @@ select:focus {
   padding: 0.5rem;
   background: rgba(26, 32, 44, 0.8);
   border-radius: 8px;
+  flex-wrap: wrap;
 }
 
 .nav-button {
   padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  background: #2d3748;
-  color: #e2e8f0;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.nav-button:hover:not(:disabled) {
-  background: #4a5568;
-  transform: translateY(-1px);
-}
-
-.nav-button:disabled {
-  background: #1a202c;
-  cursor: not-allowed;
-  opacity: 0.7;
+  min-width: 100px;
 }
 
 .page-info {
@@ -607,4 +942,128 @@ select:focus {
 .text-content ::selection {
   background: rgba(66, 153, 225, 0.2);
   color: #e2e8f0;
+}
+
+.book-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(26, 32, 44, 0.95) 0%, rgba(45, 55, 72, 0.95) 100%);
+  border-radius: 8px;
+  box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.book-placeholder-content {
+  text-align: center;
+  color: #a0aec0;
+  font-family: 'Georgia', serif;
+  line-height: 1.6;
+  font-size: 1rem;
+  max-width: 90%;
+  margin: 0 auto;
+  padding-top: 1rem;
+}
+
+.book-placeholder-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.book-placeholder-text-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  margin-bottom: 1rem;
+}
+
+.book-placeholder-text {
+  color: #cbd5e0;
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.book-placeholder-contact {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.book-placeholder-credit {
+  font-size: 1rem;
+  color: #e2e8f0;
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.book-placeholder-links {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 1rem;
+}
+
+.book-placeholder-link {
+  display: inline-block;
+  color: #a0aec0;
+  text-decoration: none;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  min-width: 80px;
+  text-align: center;
+}
+
+.book-placeholder-link:hover {
+  color: #e2e8f0;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .book-placeholder {
+    padding: 1rem;
+  }
+
+  .book-placeholder-title {
+    font-size: 1.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .book-placeholder-text {
+    font-size: 0.9rem;
+  }
+
+  .book-placeholder-text-container {
+    min-height: 40px;
+    margin-bottom: 0.8rem;
+  }
+
+  .book-placeholder-contact {
+    padding-top: 0.8rem;
+  }
+
+  .book-placeholder-links {
+    gap: 0.8rem;
+    padding: 0 0.5rem;
+  }
+
+  .book-placeholder-link {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+    min-width: 70px;
+  }
 }
