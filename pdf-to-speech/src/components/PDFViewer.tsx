@@ -16,6 +16,8 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
   const [searchResults, setSearchResults] = useState<Array<{page: number, sentence: string, index: number}>>([]);
   const [currentSearchIndex, setCurrentSearchIndex] = useState<number>(-1);
   const [isSearching, setIsSearching] = useState(false);
+  const [tableOfContents, setTableOfContents] = useState<Array<{title: string, page: number}>>([]);
+  const [showTOC, setShowTOC] = useState(false);
   
   // PDF yüklenmiş mi kontrolü
   const isPDFLoaded = state.pagesText && state.pagesText.length > 0 && totalPages > 0;
@@ -28,7 +30,22 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
   const rightPageText = isPDFLoaded ? (state.pagesText[currentPage] || '') : '';
   const rightPageSentences = rightPageText ? (rightPageText.match(/[^.!?]+[.!?]+/g) || [rightPageText]) : [];
 
-  // Kelime arama fonksiyonu
+  // Türkçe karakter normalizasyonu
+  const normalizeText = (text: string): string => {
+    return text
+      .toLowerCase()
+      .replace(/ğ/g, 'g')
+      .replace(/ü/g, 'u')
+      .replace(/ş/g, 's')
+      .replace(/ı/g, 'i')
+      .replace(/ö/g, 'o')
+      .replace(/ç/g, 'c')
+      .replace(/[^\w\s]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  };
+
+  // Gelişmiş kelime arama fonksiyonu
   const performSearch = (term: string) => {
     if (!term.trim() || !isPDFLoaded) {
       setSearchResults([]);
@@ -37,12 +54,16 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
     }
 
     const results: Array<{page: number, sentence: string, index: number}> = [];
-    const searchRegex = new RegExp(term.trim(), 'gi');
+    const normalizedSearchTerm = normalizeText(term.trim());
 
     state.pagesText.forEach((pageText, pageIndex) => {
       const sentences = pageText.match(/[^.!?]+[.!?]+/g) || [pageText];
       sentences.forEach((sentence, sentenceIndex) => {
-        if (searchRegex.test(sentence)) {
+        const normalizedSentence = normalizeText(sentence);
+        
+        // Hem normalize edilmiş hem de orijinal metinde ara
+        if (normalizedSentence.includes(normalizedSearchTerm) || 
+            sentence.toLowerCase().includes(term.toLowerCase())) {
           results.push({
             page: pageIndex + 1,
             sentence: sentence.trim(),
@@ -201,16 +222,300 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
     setPageInput(value);
   };
 
-  const renderSentences = (sentences: string[], pageIndex: number) => {
-    return sentences.map((sentence, index) => {
+  // İçindekiler tespiti
+  const detectTableOfContents = () => {
+    if (!isPDFLoaded) return;
+
+    const toc: Array<{title: string, page: number}> = [];
+    const tocPatterns = [
+      // Türkçe başlık kalıpları
+      /^(BÖLÜM|CHAPTER|BAB|KONU|DERS|UNIT)\s*\d+[:.-\s]*(.*)/i,
+      /^(\d+[.)]\s*)(.*)/,
+      /^([A-ZÜĞŞÇÖI]{2,}.*)/,
+      // Numaralı başlıklar
+      /^(\d+\.\d+[.\s]*)(.*)/,
+      /^(\d+\.\s*)(.*)/,
+      // İçindekiler sayfası tespiti
+      /^(.*?)\s*\.{3,}\s*(\d+)$/,
+      /^(.*?)\s*-{2,}\s*(\d+)$/,
+      // Büyük harfli başlıklar
+      /^([A-ZÜĞŞÇÖI\s]{5,})$/
+    ];
+
+    state.pagesText.forEach((pageText, pageIndex) => {
+      const lines = pageText.split('\n').filter(line => line.trim().length > 0);
+      
+      lines.forEach(line => {
+        const trimmedLine = line.trim();
+        
+        // İçindekiler sayfası kontrolü
+        if (trimmedLine.toLowerCase().includes('içindekiler') || 
+            trimmedLine.toLowerCase().includes('contents') ||
+            trimmedLine.toLowerCase().includes('index')) {
+          return;
+        }
+
+        tocPatterns.forEach(pattern => {
+          const match = trimmedLine.match(pattern);
+          if (match && trimmedLine.length < 100) {
+            let title = '';
+            let pageNum = pageIndex + 1;
+
+            if (pattern.source.includes('\\d+)$')) {
+              // Sayfa numarası olan kalıp
+              title = match[1];
+              pageNum = parseInt(match[2]) || pageIndex + 1;
+            } else {
+              // Diğer kalıplar
+              title = match[2] || match[1] || trimmedLine;
+            }
+
+            if (title && title.length > 2 && title.length < 80) {
+              toc.push({
+                title: title.trim(),
+                page: pageNum
+              });
+            }
+          }
+        });
+      });
+    });
+
+    // Tekrarları temizle ve sırala
+    const uniqueTOC = toc.filter((item, index, self) => 
+      index === self.findIndex(t => t.title === item.title)
+    ).sort((a, b) => a.page - b.page);
+
+    setTableOfContents(uniqueTOC);
+  };
+
+  // PDF yüklendiğinde içindekiler tespiti yap
+  useEffect(() => {
+    if (isPDFLoaded) {
+      detectTableOfContents();
+    }
+  }, [isPDFLoaded, state.pagesText]);
+
+  // Metin formatlaması - Kitap formatında
+  const formatPageText = (text: string) => {
+    if (!text) return [];
+
+    // Satırları ayır ve temizle
+    const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+    const formattedContent: Array<{text: string, type: string, level?: number}> = [];
+    
+    let currentParagraph = '';
+    
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      
+      // İçindekiler tespiti
+      if (line.toLowerCase().includes('içindekiler') || 
+          line.toLowerCase().includes('contents') ||
+          line.toLowerCase().includes('table of contents')) {
+        if (currentParagraph) {
+          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+          currentParagraph = '';
+        }
+        formattedContent.push({text: line, type: 'toc-title'});
+        continue;
+      }
+      
+      // İçindekiler satırı tespiti (noktalı çizgili)
+      if (/^(.+?)\s*[.·-]{3,}\s*(\d+)\s*$/.test(line)) {
+        if (currentParagraph) {
+          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+          currentParagraph = '';
+        }
+        const match = line.match(/^(.+?)\s*[.·-]{3,}\s*(\d+)\s*$/);
+        if (match) {
+          formattedContent.push({
+            text: line,
+            type: 'toc-item',
+            level: (match[1].match(/^\d+\./) ? 1 : match[1].match(/^\d+\.\d+/) ? 2 : 0)
+          });
+        }
+        continue;
+      }
+      
+      // Numaralı başlık tespiti (1., 1.1, 1.1.1 gibi)
+      if (/^\d+(\.\d+)*\.?\s+/.test(line)) {
+        if (currentParagraph) {
+          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+          currentParagraph = '';
+        }
+        const level = (line.match(/\./g) || []).length;
+        formattedContent.push({text: line, type: 'numbered-heading', level});
+        continue;
+      }
+      
+      // Büyük harfli başlık tespiti
+      if (/^[A-ZÜĞŞÇÖI\s]{5,}$/.test(line) && line.length < 50) {
+        if (currentParagraph) {
+          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+          currentParagraph = '';
+        }
+        formattedContent.push({text: line, type: 'main-heading'});
+        continue;
+      }
+      
+      // Bölüm başlığı tespiti
+      if (/^(BÖLÜM|CHAPTER|BAB|KONU|DERS|UNIT)\s*\d+/i.test(line)) {
+        if (currentParagraph) {
+          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+          currentParagraph = '';
+        }
+        formattedContent.push({text: line, type: 'chapter-heading'});
+        continue;
+      }
+      
+      // Liste öğesi tespiti
+      if (/^[-*•]\s+/.test(line) || /^\d+[.)]\s+/.test(line)) {
+        if (currentParagraph) {
+          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+          currentParagraph = '';
+        }
+        formattedContent.push({text: line, type: 'list-item'});
+        continue;
+      }
+      
+      // Normal paragraf
+      if (currentParagraph) {
+        currentParagraph += ' ' + line;
+      } else {
+        currentParagraph = line;
+      }
+      
+      // Paragraf sonu kontrolü (boş satır veya son satır)
+      if (i === lines.length - 1 || 
+          (i < lines.length - 1 && lines[i + 1].trim() === '')) {
+        if (currentParagraph.trim()) {
+          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+          currentParagraph = '';
+        }
+      }
+    }
+    
+    return formattedContent;
+  };
+
+  // İçindekiler'e git
+  const goToTOCItem = (pageNumber: number) => {
+    goToPage(pageNumber);
+    setShowTOC(false);
+  };
+
+  const renderFormattedContent = (text: string, pageIndex: number) => {
+    const formattedContent = formatPageText(text);
+    
+    return formattedContent.map((content, cIndex) => {
+      // İçindekiler başlığı
+      if (content.type === 'toc-title') {
+        return (
+          <div key={cIndex} className="toc-title-container">
+            <h2 className="toc-main-title">📚 {content.text}</h2>
+          </div>
+        );
+      }
+      
+      // İçindekiler öğesi
+      if (content.type === 'toc-item') {
+        const match = content.text.match(/^(.+?)\s*[.·-]{3,}\s*(\d+)\s*$/);
+        if (match) {
+          const title = match[1].trim();
+          const pageNum = match[2];
+          const level = content.level || 0;
+          
+          return (
+            <div 
+              key={cIndex} 
+              className={`toc-item-display level-${level}`}
+              onClick={() => goToPage(parseInt(pageNum))}
+              title={`Sayfa ${pageNum}'ye git`}
+            >
+              <span className="toc-item-title">{title}</span>
+              <span className="toc-dots"></span>
+              <span className="toc-page-num">{pageNum}</span>
+            </div>
+          );
+        }
+      }
+      
+      // Bölüm başlığı
+      if (content.type === 'chapter-heading') {
+        return (
+          <div key={cIndex} className="chapter-heading-container">
+            <h1 className="chapter-title">📖 {content.text}</h1>
+          </div>
+        );
+      }
+      
+      // Ana başlık
+      if (content.type === 'main-heading') {
+        return (
+          <div key={cIndex} className="main-heading-container">
+            <h2 className="main-title">{content.text}</h2>
+          </div>
+        );
+      }
+      
+      // Numaralı başlık
+      if (content.type === 'numbered-heading') {
+        const level = content.level || 1;
+        const HeadingTag = level === 1 ? 'h3' : level === 2 ? 'h4' : 'h5';
+        
+        return (
+          <div key={cIndex} className={`numbered-heading-container level-${level}`}>
+            <HeadingTag className="numbered-title">{content.text}</HeadingTag>
+          </div>
+        );
+      }
+      
+      // Liste öğesi
+      if (content.type === 'list-item') {
+        return (
+          <div key={cIndex} className="list-item-container">
+            <div className="list-marker">•</div>
+            <div className="list-content">
+              {renderTextWithSentences(content.text, pageIndex)}
+            </div>
+          </div>
+        );
+      }
+      
+      // Normal paragraf
+      if (content.type === 'paragraph') {
+        return (
+          <div key={cIndex} className="paragraph-container">
+            <p className="paragraph-text">
+              {renderTextWithSentences(content.text, pageIndex)}
+            </p>
+          </div>
+        );
+      }
+      
+      return null;
+    });
+  };
+
+  // Metin içindeki cümleleri render etme
+  const renderTextWithSentences = (text: string, pageIndex: number) => {
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    
+    return sentences.map((sentence, sIndex) => {
       const trimmedSentence = sentence.trim();
       const isCurrentSentence = trimmedSentence === currentSentence;
       const isHovered = trimmedSentence === hoveredSentence;
-      const isSearchHighlight = searchTerm && trimmedSentence.toLowerCase().includes(searchTerm.toLowerCase());
+      
+      // Gelişmiş arama vurgulaması - Türkçe karakter desteği
+      const isSearchHighlight = searchTerm && (
+        normalizeText(trimmedSentence).includes(normalizeText(searchTerm)) ||
+        trimmedSentence.toLowerCase().includes(searchTerm.toLowerCase())
+      );
 
       return (
         <span
-          key={index}
+          key={sIndex}
           className={`sentence ${isCurrentSentence ? 'current' : ''} ${isHovered ? 'hovered' : ''} ${isSearchHighlight ? 'search-highlight' : ''}`}
           onMouseEnter={() => setHoveredSentence(trimmedSentence)}
           onMouseLeave={() => setHoveredSentence('')}
@@ -218,10 +523,44 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
           title="Okumaya başlamak için tıklayın"
         >
           {trimmedSentence}
-          {index < sentences.length - 1 ? '. ' : ''}
+          {sIndex < sentences.length - 1 ? ' ' : ''}
         </span>
       );
     });
+  };
+
+  // İçindekiler render etme
+  const renderTableOfContents = () => {
+    if (tableOfContents.length === 0) return null;
+
+    return (
+      <div className="table-of-contents">
+        <div className="toc-header">
+          <h3>📚 İçindekiler</h3>
+          <button 
+            className="toc-close-btn"
+            onClick={() => setShowTOC(false)}
+            title="Kapat"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="toc-content">
+          {tableOfContents.map((item, index) => (
+            <div 
+              key={index}
+              className="toc-item"
+              onClick={() => goToTOCItem(item.page)}
+              title={`Sayfa ${item.page}'ye git`}
+            >
+              <span className="toc-title">{item.title}</span>
+              <span className="toc-dots">{'·'.repeat(3)}</span>
+              <span className="toc-page">{item.page}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   };
 
   const renderPlaceholder = (isLeftPage: boolean) => {
@@ -268,8 +607,19 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
               <span className="nav-icon">🧭</span>
               <span>Navigasyon & Arama</span>
             </div>
-            <div className="page-counter">
-              Sayfa {currentPage} / {totalPages}
+            <div className="nav-actions">
+              {tableOfContents.length > 0 && (
+                <button 
+                  className="toc-toggle-btn"
+                  onClick={() => setShowTOC(!showTOC)}
+                  title="İçindekiler"
+                >
+                  📚
+                </button>
+              )}
+              <div className="page-counter">
+                Sayfa {currentPage} / {totalPages}
+              </div>
             </div>
           </div>
 
@@ -283,7 +633,7 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
                     type="text"
                     value={searchTerm}
                     onChange={handleSearchChange}
-                    placeholder="PDF içinde kelime ara..."
+                    placeholder="PDF içinde kelime ara (Türkçe karakter desteği)..."
                     className="search-input-advanced"
                   />
                   {isSearching && <div className="search-loading">⏳</div>}
@@ -374,7 +724,7 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
                 )}
                 <div className="text-content">
                   {isPDFLoaded && leftPageSentences.length > 0 
-                    ? renderSentences(leftPageSentences, 0) 
+                    ? renderFormattedContent(leftPageText, 0) 
                     : (!isPDFLoaded ? renderPlaceholder(true) : null)
                   }
                 </div>
@@ -391,7 +741,7 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
                 )}
                 <div className="text-content">
                   {isPDFLoaded && rightPageSentences.length > 0 
-                    ? renderSentences(rightPageSentences, 1) 
+                    ? renderFormattedContent(rightPageText, 1) 
                     : (!isPDFLoaded ? renderPlaceholder(false) : null)
                   }
                 </div>
@@ -438,6 +788,9 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
           </div>
         )}
       </div>
+
+      {/* İçindekiler Paneli */}
+      {showTOC && renderTableOfContents()}
     </div>
   );
 } 

@@ -909,11 +909,12 @@ select:focus {
   }
 
   .container {
-    padding: 0.5rem 0.5rem 0 0.5rem;
+    padding: 0.5rem;
     width: 100%;
     max-width: 100vw;
     box-sizing: border-box;
     margin: 0;
+    overflow-x: hidden;
   }
 
   h1 {
@@ -1126,9 +1127,10 @@ select:focus {
   }
 
   .page-info {
+    width: 100%;
     font-size: 0.85rem;
-    padding: 0.6rem 1.2rem;
-    min-width: 100px;
+    padding: 0.7rem;
+    box-sizing: border-box;
   }
 
   .book-placeholder {
@@ -1148,7 +1150,7 @@ select:focus {
   }
 
   .book-placeholder-title {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     margin-bottom: 2rem;
     text-align: center;
   }
@@ -1851,107 +1853,107 @@ select:focus {
 }
 
 @media (max-width: 768px) {
+  /* Navigasyon paneli kompakt hali */
   .advanced-navigation-panel {
-    margin: 1.5rem auto;
+    margin: 1rem 0.5rem;
     border-radius: 16px;
+    max-width: calc(100vw - 1rem);
+    overflow: hidden;
+    box-sizing: border-box;
   }
   
   .navigation-header {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1rem 1.5rem;
-    text-align: center;
-  }
-  
-  .navigation-content {
-    padding: 1.5rem;
-    gap: 1.5rem;
-  }
-  
-  .search-input-advanced {
-    padding: 0.9rem 0.9rem 0.9rem 2.8rem;
-    font-size: 0.9rem;
-  }
-  
-  .page-input-container {
-    flex-direction: column;
-    gap: 0.8rem;
-    align-items: stretch;
-  }
-  
-  .page-input-label {
-    text-align: center;
-    min-width: auto;
-  }
-  
-  .quick-navigation {
-    flex-direction: column;
-    gap: 0.8rem;
-  }
-  
-  .quick-nav-btn {
-    padding: 0.9rem;
-    font-size: 0.85rem;
-  }
-  
-  .search-results-info {
-    flex-direction: column;
-    gap: 0.8rem;
-    text-align: center;
-  }
-}
-
-@media (max-width: 480px) {
-  .advanced-navigation-panel {
-    margin: 1rem auto;
-    border-radius: 12px;
-  }
-  
-  .navigation-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
     padding: 0.8rem 1rem;
+    text-align: left;
+    flex-wrap: nowrap;
   }
   
   .nav-title {
+    font-size: 0.9rem;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+  
+  .nav-icon {
     font-size: 1rem;
-    gap: 0.5rem;
+  }
+  
+  .page-counter {
+    font-size: 0.75rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 8px;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   
   .navigation-content {
     padding: 1rem;
     gap: 1rem;
+    grid-template-columns: 1fr;
   }
   
-  .search-input-advanced {
-    padding: 0.8rem 0.8rem 0.8rem 2.5rem;
-    font-size: 0.85rem;
-    border-radius: 12px;
-  }
-  
+  /* Tüm input ve button'lar için taşma önleme */
+  .search-input-advanced,
   .page-input-advanced {
-    padding: 0.8rem;
-    font-size: 0.9rem;
-    border-radius: 10px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
   }
   
   .quick-nav-btn {
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .advanced-navigation-panel {
+    margin: 0.8rem 0.3rem;
+    border-radius: 12px;
+    width: calc(100vw - 0.6rem);
+    max-width: calc(100vw - 0.6rem);
+    box-sizing: border-box;
+  }
+  
+  .navigation-header {
+    padding: 0.6rem 0.8rem;
+    gap: 0.3rem;
+  }
+  
+  .nav-title {
+    font-size: 0.8rem;
+    gap: 0.3rem;
+  }
+  
+  .nav-icon {
+    font-size: 0.9rem;
+  }
+  
+  .page-counter {
+    font-size: 0.7rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 6px;
+  }
+  
+  .navigation-content {
     padding: 0.8rem;
-    font-size: 0.8rem;
-    border-radius: 10px;
+    gap: 0.8rem;
   }
   
-  .search-nav-btn {
-    width: 28px;
-    height: 28px;
-    font-size: 0.8rem;
-  }
-  
-  .results-count {
-    font-size: 0.8rem;
-  }
-  
-  .search-position {
-    font-size: 0.75rem;
-    min-width: 50px;
+  /* Küçük ekranlar için daha kompakt butonlar */
+  .quick-nav-btn {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.7rem;
+    border-radius: 8px;
+    width: 100%;
+    min-width: auto;
+    box-sizing: border-box;
   }
 }
 
@@ -2057,5 +2059,411 @@ select:focus {
   
   .footer-separator {
     font-size: 0.6rem;
+  }
+}
+
+/* Tüm input ve button'lar için taşma önleme */
+.search-input-advanced,
+.page-input-advanced {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mobil Arama Bölümü */
+.search-section {
+  order: 1;
+}
+
+.search-input-wrapper {
+  position: relative;
+}
+
+.search-icon {
+  left: 0.8rem;
+  font-size: 1rem;
+}
+
+.search-input-advanced {
+  padding: 0.7rem 0.7rem 0.7rem 2.2rem;
+  font-size: 0.85rem;
+  border-radius: 12px;
+}
+
+.search-loading {
+  right: 0.8rem;
+  font-size: 1rem;
+}
+
+.search-results-info {
+  padding: 0.7rem;
+  border-radius: 10px;
+  flex-direction: column;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.results-count {
+  font-size: 0.8rem;
+}
+
+.search-navigation {
+  justify-content: center;
+  gap: 0.8rem;
+}
+
+.search-nav-btn {
+  width: 28px;
+  height: 28px;
+  font-size: 0.8rem;
+  border-radius: 6px;
+}
+
+.search-position {
+  font-size: 0.75rem;
+  min-width: 50px;
+}
+
+/* Mobil Sayfa Navigasyonu */
+.page-navigation-section {
+  order: 2;
+}
+
+.page-controls {
+  gap: 0.8rem;
+}
+
+.page-input-container {
+  flex-direction: row;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.page-input-label {
+  font-size: 0.85rem;
+  min-width: 45px;
+  text-align: left;
+}
+
+.page-input-advanced {
+  padding: 0.6rem 0.8rem;
+  font-size: 0.85rem;
+  border-radius: 10px;
+  flex: 1;
+  max-width: 80px;
+}
+
+.quick-navigation {
+  gap: 0.6rem;
+}
+
+.quick-nav-btn {
+  padding: 0.6rem 1rem;
+  font-size: 0.75rem;
+  border-radius: 10px;
+  flex: 1;
+  min-width: 70px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Kitap Formatı Stilleri */
+
+/* İçindekiler Ana Başlığı */
+.toc-title-container {
+  text-align: center;
+  margin: 2rem 0 1.5rem 0;
+  padding-bottom: 1rem;
+  border-bottom: 3px solid rgba(59, 130, 246, 0.3);
+}
+
+.toc-main-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #f8fafc;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0;
+}
+
+/* İçindekiler Öğeleri */
+.toc-item-display {
+  display: flex;
+  align-items: center;
+  padding: 0.8rem 1rem;
+  margin: 0.3rem 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  background: rgba(51, 65, 85, 0.3);
+  border-left: 3px solid transparent;
+}
+
+.toc-item-display:hover {
+  background: rgba(59, 130, 246, 0.2);
+  border-left-color: #3b82f6;
+  transform: translateX(8px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.toc-item-display.level-0 {
+  margin-left: 0;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.toc-item-display.level-1 {
+  margin-left: 1.5rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.toc-item-display.level-2 {
+  margin-left: 3rem;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+.toc-item-title {
+  color: #f8fafc;
+  flex: 1;
+  text-align: left;
+}
+
+.toc-dots {
+  flex: 1;
+  height: 1px;
+  background: repeating-linear-gradient(
+    to right,
+    transparent,
+    transparent 3px,
+    #64748b 3px,
+    #64748b 6px
+  );
+  margin: 0 1rem;
+  opacity: 0.6;
+}
+
+.toc-page-num {
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 0.9rem;
+  min-width: 2rem;
+  text-align: right;
+}
+
+/* Bölüm Başlıkları */
+.chapter-heading-container {
+  text-align: center;
+  margin: 3rem 0 2rem 0;
+  padding: 1.5rem 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+  border-radius: 16px;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+}
+
+.chapter-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #f8fafc;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  margin: 0;
+  background: linear-gradient(135deg, #f8fafc, #cbd5e1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Ana Başlıklar */
+.main-heading-container {
+  margin: 2rem 0 1.5rem 0;
+  padding: 1rem 0;
+  border-bottom: 2px solid rgba(71, 85, 105, 0.5);
+}
+
+.main-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #f8fafc;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Numaralı Başlıklar */
+.numbered-heading-container {
+  margin: 1.5rem 0 1rem 0;
+}
+
+.numbered-heading-container.level-1 {
+  margin-left: 0;
+}
+
+.numbered-heading-container.level-2 {
+  margin-left: 1rem;
+}
+
+.numbered-heading-container.level-3 {
+  margin-left: 2rem;
+}
+
+.numbered-title {
+  color: #f8fafc;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.numbered-heading-container.level-1 .numbered-title {
+  font-size: 1.3rem;
+  color: #3b82f6;
+}
+
+.numbered-heading-container.level-2 .numbered-title {
+  font-size: 1.1rem;
+  color: #06b6d4;
+}
+
+.numbered-heading-container.level-3 .numbered-title {
+  font-size: 1rem;
+  color: #10b981;
+}
+
+/* Liste Öğeleri */
+.list-item-container {
+  display: flex;
+  align-items: flex-start;
+  margin: 0.8rem 0;
+  padding-left: 1rem;
+}
+
+.list-marker {
+  color: #3b82f6;
+  font-weight: bold;
+  margin-right: 0.8rem;
+  margin-top: 0.2rem;
+  font-size: 1.1rem;
+}
+
+.list-content {
+  flex: 1;
+  line-height: 1.6;
+}
+
+/* Paragraflar */
+.paragraph-container {
+  margin: 1rem 0;
+}
+
+.paragraph-text {
+  color: #f8fafc;
+  line-height: 1.8;
+  text-align: justify;
+  margin: 0;
+  text-indent: 1.5rem;
+  font-size: 1rem;
+}
+
+/* Cümle Stilleri - Kitap Formatı */
+.sentence {
+  display: inline;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.sentence:hover {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+}
+
+.sentence.current {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.3));
+  color: #93c5fd;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+}
+
+/* Responsive Kitap Formatı */
+@media (max-width: 768px) {
+  .toc-main-title {
+    font-size: 1.4rem;
+  }
+  
+  .chapter-title {
+    font-size: 1.3rem;
+  }
+  
+  .main-title {
+    font-size: 1.2rem;
+  }
+  
+  .numbered-heading-container.level-1 .numbered-title {
+    font-size: 1.1rem;
+  }
+  
+  .numbered-heading-container.level-2 .numbered-title {
+    font-size: 1rem;
+  }
+  
+  .numbered-heading-container.level-3 .numbered-title {
+    font-size: 0.9rem;
+  }
+  
+  .paragraph-text {
+    font-size: 0.95rem;
+    text-indent: 1rem;
+  }
+  
+  .toc-item-display {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.9rem;
+  }
+  
+  .toc-item-display.level-1 {
+    margin-left: 1rem;
+  }
+  
+  .toc-item-display.level-2 {
+    margin-left: 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .toc-main-title {
+    font-size: 1.2rem;
+  }
+  
+  .chapter-title {
+    font-size: 1.1rem;
+  }
+  
+  .main-title {
+    font-size: 1rem;
+  }
+  
+  .paragraph-text {
+    font-size: 0.9rem;
+    text-indent: 0.8rem;
+    text-align: left;
+  }
+  
+  .toc-item-display {
+    padding: 0.5rem 0.6rem;
+    font-size: 0.85rem;
+  }
+  
+  .list-item-container {
+    padding-left: 0.5rem;
+  }
+  
+  .list-marker {
+    margin-right: 0.5rem;
   }
 }
