@@ -282,31 +282,64 @@ export function PDFReader() {
   };
 
   return (
-    <div className="container">
+    <div className="container" style={{marginTop: '50px'}}>
       <h1>Sesli PDF Okuyucu</h1>
       
       <PDFUploader onFileSelect={handleFile} isLoading={state.isLoading} />
       
-      <VoiceSelector 
-        voices={state.voices}
-        selectedVoice={state.selectedVoice}
-        onVoiceChange={(voice) => dispatch({ type: 'SET_SELECTED_VOICE', payload: voice })}
-      />
+      {/* Ses Seçici ve Kontroller - Sadece PDF yüklendiyse göster */}
+      {state.pagesText && state.pagesText.length > 0 && (
+        <>
+          <VoiceSelector 
+            voices={state.voices}
+            selectedVoice={state.selectedVoice}
+            onVoiceChange={(voice) => dispatch({ type: 'SET_SELECTED_VOICE', payload: voice })}
+          />
 
-      <Controls 
-        isPlaying={state.isPlaying}
-        isPaused={state.isPaused}
-        onPlay={state.isPaused ? resumeSpeaking : speakText}
-        onPause={pauseSpeaking}
-        onStop={stopSpeaking}
-        disabled={!state.currentText}
-      />
+          <Controls 
+            isPlaying={state.isPlaying}
+            isPaused={state.isPaused}
+            onPlay={state.isPaused ? resumeSpeaking : speakText}
+            onPause={pauseSpeaking}
+            onStop={stopSpeaking}
+            disabled={!state.currentText}
+          />
+        </>
+      )}
 
       <PDFViewer 
         currentPage={state.currentPage}
         totalPages={state.totalPages}
         currentSentence={state.currentSentence}
       />
+
+      {/* Footer */}
+      <footer className="app-footer">
+        <div className="footer-content">
+          <div className="footer-text">
+            <span className="footer-main">Developed by M.Fatih</span>
+          </div>
+          <div className="footer-links">
+            <a 
+              href="https://linkedin.com/in/iammfatihnaziroglu" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="footer-link"
+              title="LinkedIn Profile"
+            >
+              LinkedIn
+            </a>
+            <span className="footer-separator">•</span>
+            <a 
+              href="mailto:m.fatihnaziroglu@gmail.com" 
+              className="footer-link"
+              title="Send Email"
+            >
+              İletişim
+            </a>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 } 
