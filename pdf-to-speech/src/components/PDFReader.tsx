@@ -33,6 +33,7 @@ export function PDFReader() {
   const { state, dispatch } = usePDF();
   const pdfRef = useRef<PDFDocument | null>(null);
   const isReadingRef = useRef(false);
+  const currentReadingPageRef = useRef(1);
 
   useEffect(() => {
     const script = document.createElement('script');
@@ -86,6 +87,7 @@ export function PDFReader() {
       dispatch({ type: 'SET_TEXT', payload: pagesText[0] || '' });
       dispatch({ type: 'SET_PAGE', payload: { current: 1, total: pdf.numPages } });
       dispatch({ type: 'SET_SENTENCE', payload: '' });
+      currentReadingPageRef.current = 1;
     } catch (error) {
       console.error('PDF yükleme hatası:', error);
       alert('PDF yüklenirken bir hata oluştu.');
@@ -94,6 +96,7 @@ export function PDFReader() {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const loadPage = async (pageNumber: number) => {
     if (!pdfRef.current) return;
     const pagesText = state.pagesText;
@@ -101,6 +104,7 @@ export function PDFReader() {
       dispatch({ type: 'SET_TEXT', payload: pagesText[pageNumber - 1] });
       dispatch({ type: 'SET_PAGE', payload: { current: pageNumber, total: state.totalPages } });
       dispatch({ type: 'SET_SENTENCE', payload: '' });
+      currentReadingPageRef.current = pageNumber;
     } else {
       // Eski yöntemle yükle (güvenlik için)
       try {
@@ -110,9 +114,33 @@ export function PDFReader() {
         dispatch({ type: 'SET_TEXT', payload: pageText });
         dispatch({ type: 'SET_PAGE', payload: { current: pageNumber, total: state.totalPages } });
         dispatch({ type: 'SET_SENTENCE', payload: '' });
+        currentReadingPageRef.current = pageNumber;
       } catch (error) {
         console.error('Sayfa yükleme hatası:', error);
       }
+    }
+  };
+
+  // Cümlenin hangi sayfada olduğunu bul
+  const findSentencePage = (sentence: string): number => {
+    if (!state.pagesText) return currentReadingPageRef.current;
+    
+    for (let i = 0; i < state.pagesText.length; i++) {
+      if (state.pagesText[i].includes(sentence.trim())) {
+        return i + 1; // Sayfa numarası 1'den başlar
+      }
+    }
+    return currentReadingPageRef.current;
+  };
+
+  // Kullanıcının gördüğü sayfayı güncelle
+  const updateDisplayPage = (readingPage: number) => {
+    // Eğer okuma sayfası kullanıcının gördüğü sayfadan farklıysa güncelle
+    if (readingPage !== state.currentPage && readingPage !== state.currentPage + 1) {
+      // Çift sayfa görünümü için sol sayfayı göster
+      const displayPage = readingPage % 2 === 0 ? readingPage - 1 : readingPage;
+      console.log(`Sayfa güncelleniyor: ${state.currentPage} -> ${displayPage} (okuma sayfası: ${readingPage})`);
+      dispatch({ type: 'SET_PAGE', payload: { current: displayPage, total: state.totalPages } });
     }
   };
 
@@ -151,9 +179,31 @@ export function PDFReader() {
 
       if (currentSentenceIndex >= sentences.length) {
         console.log('Tüm cümleler okundu');
-        if (state.currentPage < state.totalPages) {
+        if (currentReadingPageRef.current < state.totalPages) {
           console.log('Sonraki sayfaya geçiliyor');
-          loadPage(state.currentPage + 1);
+          
+          // Sonraki sayfaya geç
+          const nextPage = currentReadingPageRef.current + 1;
+          currentReadingPageRef.current = nextPage;
+          
+          // Kullanıcının gördüğü sayfayı güncelle
+          updateDisplayPage(nextPage);
+          
+          // Sonraki sayfa metnini yükle ve okumaya devam et
+          if (state.pagesText && state.pagesText[nextPage - 1]) {
+            const nextPageText = state.pagesText[nextPage - 1];
+            const nextSentences = nextPageText.match(/[^.!?]+[.!?]+/g) || [nextPageText];
+            
+            // Yeni sayfa cümlelerini ayarla
+            sentences.length = 0;
+            sentences.push(...nextSentences);
+            currentSentenceIndex = 0;
+            
+            // Okumaya devam et
+            setTimeout(speakNextSentence, 200);
+          } else {
+            stopSpeaking();
+          }
         } else {
           console.log('Son sayfa, okuma durduruluyor');
           stopSpeaking();
@@ -163,6 +213,13 @@ export function PDFReader() {
 
       const sentence = sentences[currentSentenceIndex].trim();
       console.log('Okunacak cümle:', sentence);
+
+      // Cümlenin hangi sayfada olduğunu tespit et ve kullanıcının gördüğü sayfayı güncelle
+      const sentencePage = findSentencePage(sentence);
+      if (sentencePage !== currentReadingPageRef.current) {
+        currentReadingPageRef.current = sentencePage;
+        updateDisplayPage(sentencePage);
+      }
 
       const utterance = new SpeechSynthesisUtterance(sentence);
       
@@ -271,7 +328,6 @@ export function PDFReader() {
       />
 
       <PDFViewer 
-        currentText={state.currentText}
         currentPage={state.currentPage}
         totalPages={state.totalPages}
         currentSentence={state.currentSentence}

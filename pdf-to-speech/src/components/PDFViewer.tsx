@@ -1,28 +1,43 @@
 import { usePDF } from '../context/PDFContext';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface PDFViewerProps {
-  currentText: string;
   currentPage: number;
   totalPages: number;
   currentSentence: string;
 }
 
-export function PDFViewer({ currentText, currentPage, totalPages, currentSentence }: PDFViewerProps) {
+export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewerProps) {
   const { state, dispatch } = usePDF();
   const [hoveredSentence, setHoveredSentence] = useState<string>('');
+  const [isPageTransitioning, setIsPageTransitioning] = useState(false);
+  
+  // PDF yüklenmiş mi kontrolü
+  const isPDFLoaded = state.pagesText && state.pagesText.length > 0 && totalPages > 0;
   
   // Sol sayfa için metin (tek numaralı sayfalar)
-  const leftPageText = state.pagesText[currentPage - 1] || '';
-  const leftPageSentences = leftPageText.match(/[^.!?]+[.!?]+/g) || [leftPageText];
+  const leftPageText = isPDFLoaded ? (state.pagesText[currentPage - 1] || '') : '';
+  const leftPageSentences = leftPageText ? (leftPageText.match(/[^.!?]+[.!?]+/g) || [leftPageText]) : [];
   
   // Sağ sayfa için metin (çift numaralı sayfalar)
-  const rightPageText = state.pagesText[currentPage] || '';
-  const rightPageSentences = rightPageText.match(/[^.!?]+[.!?]+/g) || [rightPageText];
+  const rightPageText = isPDFLoaded ? (state.pagesText[currentPage] || '') : '';
+  const rightPageSentences = rightPageText ? (rightPageText.match(/[^.!?]+[.!?]+/g) || [rightPageText]) : [];
+
+  // Sayfa geçiş efekti
+  useEffect(() => {
+    if (isPDFLoaded) {
+      setIsPageTransitioning(true);
+      const timer = setTimeout(() => {
+        setIsPageTransitioning(false);
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [currentPage, isPDFLoaded]);
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
       const newPage = Math.max(1, currentPage - 2);
+      setIsPageTransitioning(true);
       dispatch({ type: 'SET_PAGE', payload: { current: newPage, total: totalPages } });
       dispatch({ type: 'SET_TEXT', payload: state.pagesText[newPage - 1] || '' });
     }
@@ -31,6 +46,7 @@ export function PDFViewer({ currentText, currentPage, totalPages, currentSentenc
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       const newPage = Math.min(totalPages, currentPage + 2);
+      setIsPageTransitioning(true);
       dispatch({ type: 'SET_PAGE', payload: { current: newPage, total: totalPages } });
       dispatch({ type: 'SET_TEXT', payload: state.pagesText[newPage - 1] || '' });
     }
@@ -47,10 +63,21 @@ export function PDFViewer({ currentText, currentPage, totalPages, currentSentenc
     if (clickedIndex !== -1) {
       let remainingText = sentences.slice(clickedIndex).join(' ');
       
+      // Eğer sağ sayfada tıklandıysa ve sonraki sayfalar varsa, onları da ekle
       if (pageIndex === 1 && currentPage < totalPages) {
-        const nextPageText = state.pagesText[currentPage + 1] || '';
-        const nextPageSentences = nextPageText.match(/[^.!?]+[.!?]+/g) || [nextPageText];
-        remainingText += ' ' + nextPageSentences.join(' ');
+        for (let i = currentPage + 1; i < state.pagesText.length; i++) {
+          const nextPageText = state.pagesText[i] || '';
+          remainingText += ' ' + nextPageText;
+        }
+      } else if (pageIndex === 0) {
+        // Sol sayfada tıklandıysa, sağ sayfayı ve sonraki sayfaları ekle
+        if (rightPageText) {
+          remainingText += ' ' + rightPageText;
+        }
+        for (let i = currentPage + 1; i < state.pagesText.length; i++) {
+          const nextPageText = state.pagesText[i] || '';
+          remainingText += ' ' + nextPageText;
+        }
       }
 
       window.speechSynthesis.cancel();
@@ -84,15 +111,6 @@ export function PDFViewer({ currentText, currentPage, totalPages, currentSentenc
   };
 
   const renderPlaceholder = (isLeftPage: boolean) => {
-    console.log('Render Placeholder:', {
-      isLeftPage,
-      currentPage,
-      totalPages,
-      currentText,
-      rightPageText,
-      rightPageSentences
-    });
-
     return (
       <div className="book-placeholder">
         <div className="book-placeholder-content">
@@ -128,74 +146,84 @@ export function PDFViewer({ currentText, currentPage, totalPages, currentSentenc
     <div className="container">
       <h1>Akıllı PDF Okuyucu</h1>
       <div className="book-container">
-        <div className="book">
+        <div className={`book ${isPageTransitioning ? 'page-transitioning' : ''}`}>
           <div className="book-cover">
             <div className="book-spine"></div>
             <div className="book-pages">
               {/* Sol Sayfa */}
-              <div className="book-page left-page">
-                <div className="page-header">
-                  <div className="page-number">
-                    <span className="current-page">{currentPage}</span>
+              <div className={`book-page left-page ${isPageTransitioning ? 'transitioning' : ''}`}>
+                {isPDFLoaded && (
+                  <div className="page-header">
+                    <div className="page-number">
+                      <span className="current-page">{currentPage}</span>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="text-content">
-                  {currentText ? renderSentences(leftPageSentences, 0) : renderPlaceholder(true)}
+                  {isPDFLoaded && leftPageSentences.length > 0 
+                    ? renderSentences(leftPageSentences, 0) 
+                    : renderPlaceholder(true)
+                  }
                 </div>
               </div>
 
-              {/* Sağ Sayfa - Her zaman göster */}
-              {(() => {
-                console.log('Sağ Sayfa Kontrol:', {
-                  currentPage,
-                  totalPages,
-                  shouldShowRightPage: true
-                });
-                return null;
-              })()}
-              <div className="book-page right-page">
-                <div className="page-header">
-                  <div className="page-number">
-                    <span className="current-page">{currentPage + 1}</span>
+              {/* Sağ Sayfa */}
+              <div className={`book-page right-page ${isPageTransitioning ? 'transitioning' : ''}`}>
+                {isPDFLoaded && (
+                  <div className="page-header">
+                    <div className="page-number">
+                      <span className="current-page">{currentPage + 1}</span>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="text-content">
-                  {currentText ? renderSentences(rightPageSentences, 1) : renderPlaceholder(false)}
+                  {isPDFLoaded && rightPageSentences.length > 0 
+                    ? renderSentences(rightPageSentences, 1) 
+                    : renderPlaceholder(false)
+                  }
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Sayfa Geçiş Butonları */}
-        <div className="page-navigation">
-          <button 
-            className="nav-button prev" 
-            onClick={handlePrevPage}
-            disabled={currentPage <= 1}
-          >
-            ← Önceki
-          </button>
-          <div className="page-info">
-            Sayfa {currentPage} / {totalPages}
+        {/* Sayfa Geçiş Butonları - Sadece PDF yüklendiyse göster */}
+        {isPDFLoaded && (
+          <div className="page-navigation">
+            <button 
+              className="nav-button prev" 
+              onClick={handlePrevPage}
+              disabled={currentPage <= 1 || isPageTransitioning}
+            >
+              ← Önceki
+            </button>
+            <div className="page-info">
+              Sayfa {currentPage} / {totalPages}
+            </div>
+            <button 
+              className="nav-button next" 
+              onClick={handleNextPage}
+              disabled={currentPage >= totalPages || isPageTransitioning}
+            >
+              Sonraki →
+            </button>
           </div>
-          <button 
-            className="nav-button next" 
-            onClick={handleNextPage}
-            disabled={currentPage >= totalPages}
-          >
-            Sonraki →
-          </button>
-        </div>
+        )}
 
-        <div className="book-progress">
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${(currentPage / totalPages) * 100}%` }}
-            ></div>
+        {/* İlerleme Çubuğu - Sadece PDF yüklendiyse göster */}
+        {isPDFLoaded && (
+          <div className="book-progress">
+            <div className="progress-bar">
+              <div 
+                className="progress-fill" 
+                style={{ width: `${(currentPage / totalPages) * 100}%` }}
+              ></div>
+            </div>
+            <div className="progress-text">
+              Sayfa {currentPage} / {totalPages}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
