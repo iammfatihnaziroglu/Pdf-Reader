@@ -96,31 +96,6 @@ export function PDFReader() {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const loadPage = async (pageNumber: number) => {
-    if (!pdfRef.current) return;
-    const pagesText = state.pagesText;
-    if (pagesText && pagesText[pageNumber - 1]) {
-      dispatch({ type: 'SET_TEXT', payload: pagesText[pageNumber - 1] });
-      dispatch({ type: 'SET_PAGE', payload: { current: pageNumber, total: state.totalPages } });
-      dispatch({ type: 'SET_SENTENCE', payload: '' });
-      currentReadingPageRef.current = pageNumber;
-    } else {
-      // Eski yöntemle yükle (güvenlik için)
-      try {
-        const page = await pdfRef.current.getPage(pageNumber);
-        const textContent = await page.getTextContent();
-        const pageText = textContent.items.map(item => item.str).join(' ').replace(/\s+/g, ' ').trim();
-        dispatch({ type: 'SET_TEXT', payload: pageText });
-        dispatch({ type: 'SET_PAGE', payload: { current: pageNumber, total: state.totalPages } });
-        dispatch({ type: 'SET_SENTENCE', payload: '' });
-        currentReadingPageRef.current = pageNumber;
-      } catch (error) {
-        console.error('Sayfa yükleme hatası:', error);
-      }
-    }
-  };
-
   // Cümlenin hangi sayfada olduğunu bul
   const findSentencePage = (sentence: string): number => {
     if (!state.pagesText) return currentReadingPageRef.current;

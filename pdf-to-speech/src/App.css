@@ -204,6 +204,258 @@ select:focus {
   background: rgba(30, 41, 59, 0.9);
 }
 
+/* Modern Voice Selector */
+.voice-selector-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: rgba(30, 41, 59, 0.8);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(71, 85, 105, 0.3);
+}
+
+.selection-title {
+  color: #f8fafc;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.search-container {
+  margin-bottom: 1.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  border: 2px solid #475569;
+  background: rgba(51, 65, 85, 0.8);
+  color: #f8fafc;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  background: rgba(51, 65, 85, 0.9);
+}
+
+.search-input::placeholder {
+  color: #94a3b8;
+}
+
+/* Arama İpucu */
+.search-hint {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.9rem;
+  font-style: italic;
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+/* Dil Seçimi */
+.language-selection {
+  margin-bottom: 2rem;
+}
+
+.language-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.language-button {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1rem;
+  border: 2px solid #475569;
+  border-radius: 12px;
+  background: rgba(51, 65, 85, 0.6);
+  color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-align: left;
+}
+
+.language-button:hover {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+}
+
+.language-button.selected {
+  border-color: #06b6d4;
+  background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(59, 130, 246, 0.3));
+  box-shadow: 0 4px 16px rgba(6, 182, 212, 0.4);
+}
+
+.language-flag {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.language-name {
+  font-weight: 600;
+  flex: 1;
+}
+
+.language-count {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  background: rgba(71, 85, 105, 0.5);
+  padding: 0.2rem 0.6rem;
+  border-radius: 8px;
+}
+
+/* Ses Seçimi */
+.voice-selection {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid rgba(71, 85, 105, 0.3);
+}
+
+.voice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.voice-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid #475569;
+  border-radius: 12px;
+  background: rgba(51, 65, 85, 0.6);
+  color: #f8fafc;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  text-align: left;
+}
+
+.voice-button:hover {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.2);
+  transform: translateX(4px);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.voice-button.selected {
+  border-color: #10b981;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 182, 212, 0.3));
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+}
+
+.voice-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.voice-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.voice-lang {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.voice-details {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.voice-gender,
+.voice-quality {
+  font-size: 1.2rem;
+}
+
+.no-voices {
+  text-align: center;
+  padding: 2rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Seçim Özeti */
+.selection-summary {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+  border-radius: 16px;
+  border: 2px solid rgba(16, 185, 129, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.selection-summary h4 {
+  color: #f8fafc;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.summary-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.summary-flag {
+  font-size: 1.5rem;
+}
+
+.summary-text {
+  color: #f8fafc;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+/* Voice List Scrollbar */
+.voice-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.voice-list::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.5);
+  border-radius: 3px;
+}
+
+.voice-list::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #475569, #64748b);
+  border-radius: 3px;
+}
+
+.voice-list::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
 /* Modern Kitap Görünümü */
 .book-container {
   perspective: 2000px;
@@ -692,6 +944,113 @@ select:focus {
     border-radius: 12px;
   }
 
+  /* Voice Selector Mobile */
+  .voice-selector-container {
+    padding: 1.2rem;
+    margin: 1.2rem auto;
+    border-radius: 16px;
+  }
+
+  .selection-title {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .search-container {
+    margin-bottom: 1rem;
+  }
+
+  .search-input {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+  }
+
+  .search-hint {
+    font-size: 0.8rem;
+    padding: 0.6rem;
+    margin-top: 0.8rem;
+    border-radius: 10px;
+  }
+
+  .language-grid {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .language-button {
+    padding: 0.7rem;
+    gap: 0.5rem;
+    border-radius: 10px;
+  }
+
+  .language-flag {
+    font-size: 1.2rem;
+  }
+
+  .language-name {
+    font-size: 0.85rem;
+  }
+
+  .language-count {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.4rem;
+  }
+
+  .voice-selection {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+  }
+
+  .voice-list {
+    max-height: 250px;
+  }
+
+  .voice-button {
+    padding: 0.7rem;
+    border-radius: 10px;
+  }
+
+  .voice-name {
+    font-size: 0.85rem;
+  }
+
+  .voice-lang {
+    font-size: 0.75rem;
+  }
+
+  .voice-details {
+    gap: 0.5rem;
+  }
+
+  .voice-gender,
+  .voice-quality {
+    font-size: 1rem;
+  }
+
+  .selection-summary {
+    padding: 1rem;
+    margin-top: 1.2rem;
+    border-radius: 12px;
+  }
+
+  .selection-summary h4 {
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .summary-content {
+    gap: 0.6rem;
+  }
+
+  .summary-flag {
+    font-size: 1.2rem;
+  }
+
+  .summary-text {
+    font-size: 0.9rem;
+  }
+
   .book {
     height: 1200px;
   }
@@ -838,6 +1197,126 @@ select:focus {
     padding: 0.8rem;
     font-size: 0.85rem;
     border-radius: 10px;
+  }
+
+  /* Voice Selector Small Mobile */
+  .voice-selector-container {
+    padding: 1rem;
+    margin: 1rem auto;
+    border-radius: 12px;
+  }
+
+  .selection-title {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .search-container {
+    margin-bottom: 0.8rem;
+  }
+
+  .search-input {
+    padding: 0.6rem 0.8rem;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .search-hint {
+    font-size: 0.75rem;
+    padding: 0.5rem;
+    margin-top: 0.6rem;
+    border-radius: 8px;
+  }
+
+  .language-grid {
+    gap: 0.5rem;
+  }
+
+  .language-button {
+    padding: 0.6rem;
+    gap: 0.4rem;
+    border-radius: 8px;
+    flex-direction: row;
+    text-align: left;
+  }
+
+  .language-flag {
+    font-size: 1.1rem;
+  }
+
+  .language-name {
+    font-size: 0.8rem;
+    font-weight: 500;
+  }
+
+  .language-count {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.3rem;
+  }
+
+  .voice-selection {
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+  }
+
+  .voice-list {
+    max-height: 200px;
+  }
+
+  .voice-button {
+    padding: 0.6rem;
+    border-radius: 8px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.3rem;
+  }
+
+  .voice-info {
+    align-items: center;
+    text-align: center;
+  }
+
+  .voice-name {
+    font-size: 0.8rem;
+  }
+
+  .voice-lang {
+    font-size: 0.7rem;
+  }
+
+  .voice-details {
+    gap: 0.4rem;
+  }
+
+  .voice-gender,
+  .voice-quality {
+    font-size: 0.9rem;
+  }
+
+  .selection-summary {
+    padding: 0.8rem;
+    margin-top: 1rem;
+    border-radius: 10px;
+  }
+
+  .selection-summary h4 {
+    font-size: 0.85rem;
+    margin-bottom: 0.6rem;
+  }
+
+  .summary-content {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .summary-flag {
+    font-size: 1.1rem;
+  }
+
+  .summary-text {
+    font-size: 0.8rem;
+    text-align: center;
   }
 
   .book {
