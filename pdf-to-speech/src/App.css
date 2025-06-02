@@ -2467,3 +2467,522 @@ select:focus {
     margin-right: 0.5rem;
   }
 }
+
+/* Akıllı Navigasyon Paneli */
+.smart-navigation-panel {
+  width: 100%;
+  max-width: 900px;
+  margin: 1.5rem auto;
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.smart-navigation-panel:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+  box-shadow: 0 12px 40px rgba(59, 130, 246, 0.2);
+}
+
+/* Üst Kısım - Arama ve Sayfa Bilgisi */
+.nav-top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid rgba(71, 85, 105, 0.3);
+  gap: 1rem;
+}
+
+.search-container-smart {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.8rem;
+  font-size: 1rem;
+  color: #94a3b8;
+  z-index: 2;
+}
+
+.search-input-smart {
+  width: 100%;
+  padding: 0.7rem 0.7rem 0.7rem 2.5rem;
+  border-radius: 12px;
+  border: 2px solid #475569;
+  background: rgba(51, 65, 85, 0.8);
+  color: #f8fafc;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-input-smart:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  background: rgba(51, 65, 85, 0.9);
+}
+
+.search-input-smart::placeholder {
+  color: #94a3b8;
+}
+
+.search-loading {
+  position: absolute;
+  right: 0.8rem;
+  font-size: 1rem;
+  animation: spin 1s linear infinite;
+}
+
+.search-results-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  padding: 0.5rem 0.8rem;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 8px;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.results-info {
+  color: #10b981;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.search-nav-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.search-nav-btn-compact {
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+}
+
+.search-nav-btn-compact:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+}
+
+.search-pos {
+  color: #f8fafc;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Sayfa Bilgisi */
+.page-info-smart {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.5rem 1rem;
+  background: rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.page-current {
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.page-separator {
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.page-total {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+
+/* Alt Kısım - Sayfa Navigasyonu */
+.nav-bottom-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  gap: 1rem;
+}
+
+.page-controls-smart {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-btn-smart {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #475569, #64748b);
+  color: #f8fafc;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn-smart:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.nav-btn-smart:disabled {
+  background: linear-gradient(135deg, #374151, #4b5563);
+  cursor: not-allowed;
+  opacity: 0.5;
+  transform: none;
+}
+
+.page-input-smart {
+  margin: 0 0.5rem;
+}
+
+.page-number-input {
+  width: 50px;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 2px solid #475569;
+  background: rgba(51, 65, 85, 0.8);
+  color: #f8fafc;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.page-number-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.toc-btn-smart {
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.toc-btn-smart:hover {
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(139, 92, 246, 0.4);
+}
+
+/* Responsive Akıllı Navigasyon */
+@media (max-width: 768px) {
+  .smart-navigation-panel {
+    margin: 1rem 0.5rem;
+    border-radius: 12px;
+  }
+  
+  .nav-top-section {
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+  }
+  
+  .search-container-smart {
+    width: 100%;
+    max-width: none;
+  }
+  
+  .search-input-smart {
+    padding: 0.6rem 0.6rem 0.6rem 2.2rem;
+    font-size: 0.85rem;
+  }
+  
+  .page-info-smart {
+    padding: 0.4rem 0.8rem;
+  }
+  
+  .nav-bottom-section {
+    flex-direction: column;
+    gap: 0.8rem;
+    padding: 0.8rem 1rem;
+  }
+  
+  .page-controls-smart {
+    justify-content: center;
+    gap: 0.8rem;
+  }
+  
+  .nav-btn-smart {
+    width: 32px;
+    height: 32px;
+    font-size: 0.9rem;
+  }
+  
+  .toc-btn-smart {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .smart-navigation-panel {
+    margin: 0.8rem 0.3rem;
+    border-radius: 10px;
+  }
+  
+  .nav-top-section,
+  .nav-bottom-section {
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .search-input-smart {
+    padding: 0.5rem 0.5rem 0.5rem 2rem;
+    font-size: 0.8rem;
+  }
+  
+  .search-icon {
+    left: 0.6rem;
+    font-size: 0.9rem;
+  }
+  
+  .page-controls-smart {
+    gap: 0.6rem;
+  }
+  
+  .nav-btn-smart {
+    width: 28px;
+    height: 28px;
+    font-size: 0.8rem;
+  }
+  
+  .page-number-input {
+    width: 45px;
+    padding: 0.4rem;
+    font-size: 0.8rem;
+  }
+  
+  .toc-btn-smart {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* İçindekiler Öğeleri - Kitap Formatı */
+.toc-item-book {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.2rem;
+  margin: 0.4rem 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  background: rgba(51, 65, 85, 0.2);
+  border-left: 4px solid transparent;
+  position: relative;
+}
+
+.toc-item-book:hover {
+  background: rgba(59, 130, 246, 0.15);
+  border-left-color: #3b82f6;
+  transform: translateX(6px);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.2);
+}
+
+.toc-item-book.level-0 {
+  margin-left: 0;
+  font-weight: 600;
+  font-size: 1.05rem;
+  background: rgba(59, 130, 246, 0.1);
+  border-left-color: #3b82f6;
+}
+
+.toc-item-book.level-1 {
+  margin-left: 2rem;
+  font-weight: 500;
+  font-size: 1rem;
+  background: rgba(6, 182, 212, 0.08);
+}
+
+.toc-item-book.level-1:hover {
+  border-left-color: #06b6d4;
+  background: rgba(6, 182, 212, 0.15);
+}
+
+.toc-item-book.level-2 {
+  margin-left: 4rem;
+  font-weight: 400;
+  font-size: 0.95rem;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.toc-item-book.level-2:hover {
+  border-left-color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.toc-item-book.level-3 {
+  margin-left: 6rem;
+  font-weight: 400;
+  font-size: 0.9rem;
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.toc-item-book.level-3:hover {
+  border-left-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.15);
+}
+
+.toc-title-book {
+  color: #f8fafc;
+  flex: 1;
+  text-align: left;
+  line-height: 1.4;
+  padding-right: 1rem;
+}
+
+.toc-arrow {
+  color: #3b82f6;
+  font-weight: bold;
+  font-size: 1.2rem;
+  margin: 0 1rem;
+  transition: all 0.3s ease;
+}
+
+.toc-item-book:hover .toc-arrow {
+  color: #93c5fd;
+  transform: translateX(4px);
+}
+
+.toc-page-book {
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 1rem;
+  min-width: 3rem;
+  text-align: right;
+  background: rgba(59, 130, 246, 0.1);
+  padding: 0.3rem 0.8rem;
+  border-radius: 8px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.toc-item-book:hover .toc-page-book {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.4);
+  color: #93c5fd;
+}
+
+/* Responsive İçindekiler - Kitap Formatı */
+@media (max-width: 768px) {
+  .toc-item-book {
+    padding: 0.6rem 1rem;
+    margin: 0.3rem 0;
+    font-size: 0.9rem;
+  }
+  
+  .toc-item-book.level-1 {
+    margin-left: 1.5rem;
+  }
+  
+  .toc-item-book.level-2 {
+    margin-left: 3rem;
+  }
+  
+  .toc-item-book.level-3 {
+    margin-left: 4.5rem;
+  }
+  
+  .toc-title-book {
+    padding-right: 0.8rem;
+  }
+  
+  .toc-arrow {
+    font-size: 1rem;
+    margin: 0 0.8rem;
+  }
+  
+  .toc-page-book {
+    font-size: 0.9rem;
+    min-width: 2.5rem;
+    padding: 0.25rem 0.6rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .toc-item-book {
+    padding: 0.5rem 0.8rem;
+    margin: 0.25rem 0;
+    font-size: 0.85rem;
+  }
+  
+  .toc-item-book.level-1 {
+    margin-left: 1rem;
+  }
+  
+  .toc-item-book.level-2 {
+    margin-left: 2rem;
+  }
+  
+  .toc-item-book.level-3 {
+    margin-left: 3rem;
+  }
+  
+  .toc-title-book {
+    padding-right: 0.5rem;
+    line-height: 1.3;
+  }
+  
+  .toc-arrow {
+    font-size: 0.9rem;
+    margin: 0 0.5rem;
+  }
+  
+  .toc-page-book {
+    font-size: 0.8rem;
+    min-width: 2rem;
+    padding: 0.2rem 0.5rem;
+  }
+}

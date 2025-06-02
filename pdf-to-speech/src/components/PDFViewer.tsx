@@ -302,91 +302,137 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
 
     // Satırları ayır ve temizle
     const lines = text.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-    const formattedContent: Array<{text: string, type: string, level?: number}> = [];
+    const formattedContent: Array<{text: string, type: string, level?: number, pageNum?: string, title?: string}> = [];
     
     let currentParagraph = '';
+    let isInTableOfContents = false;
     
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       
-      // İçindekiler tespiti
+      // İçindekiler başlığı tespiti
       if (line.toLowerCase().includes('içindekiler') || 
           line.toLowerCase().includes('contents') ||
-          line.toLowerCase().includes('table of contents')) {
+          line.toLowerCase().includes('table of contents') ||
+          line.toLowerCase().includes('index')) {
         if (currentParagraph) {
           formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
           currentParagraph = '';
         }
         formattedContent.push({text: line, type: 'toc-title'});
+        isInTableOfContents = true;
         continue;
       }
       
-      // İçindekiler satırı tespiti (noktalı çizgili)
-      if (/^(.+?)\s*[.·-]{3,}\s*(\d+)\s*$/.test(line)) {
-        if (currentParagraph) {
-          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
-          currentParagraph = '';
+      // İçindekiler bölümündeyken özel işlem
+      if (isInTableOfContents) {
+        // İçindekiler satırı tespiti - çeşitli formatlar
+        const tocPatterns = [
+          // Noktalı çizgili format: "Başlık ........ 123"
+          /^(.+?)\s*[.·-]{3,}\s*(\d+)\s*$/,
+          // Ok işaretli format: "Başlık ---> 123" veya "Başlık → 123"
+          /^(.+?)\s*[-=]{2,}>\s*(\d+)\s*$/,
+          /^(.+?)\s*[→➜➤]\s*(\d+)\s*$/,
+          // Tab veya boşluklu format: "Başlık        123"
+          /^(.+?)\s{5,}(\d+)\s*$/,
+          // Numaralı başlık format: "1. Başlık .... 123" veya "1.1 Başlık .... 123"
+          /^(\d+(?:\.\d+)*\.?\s+.+?)\s*[.·-]{2,}\s*(\d+)\s*$/,
+          // Basit format: "Başlık 123"
+          /^(.+?)\s+(\d{1,3})\s*$/
+        ];
+
+        let tocMatch = false;
+        for (const pattern of tocPatterns) {
+          const match = line.match(pattern);
+          if (match && match[1].trim().length > 2 && match[1].trim().length < 100) {
+            if (currentParagraph) {
+              formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+              currentParagraph = '';
+            }
+            
+            const title = match[1].trim();
+            const pageNum = match[2];
+            
+            // Seviye tespiti
+            let level = 0;
+            if (title.match(/^\d+\.\d+\.\d+/)) level = 3;
+            else if (title.match(/^\d+\.\d+/)) level = 2;
+            else if (title.match(/^\d+\./)) level = 1;
+            
+            formattedContent.push({
+              text: line,
+              type: 'toc-item',
+              level: level,
+              title: title,
+              pageNum: pageNum
+            });
+            tocMatch = true;
+            break;
+          }
         }
-        const match = line.match(/^(.+?)\s*[.·-]{3,}\s*(\d+)\s*$/);
-        if (match) {
-          formattedContent.push({
-            text: line,
-            type: 'toc-item',
-            level: (match[1].match(/^\d+\./) ? 1 : match[1].match(/^\d+\.\d+/) ? 2 : 0)
-          });
+        
+        if (tocMatch) continue;
+        
+        // İçindekiler bölümü sonu tespiti
+        if (line.match(/^(BÖLÜM|CHAPTER|BAB|\d+\.)/i) || 
+            line.length > 100 ||
+            (i > 0 && lines[i-1].trim() === '' && line.match(/^[A-ZÜĞŞÇÖI]/))) {
+          isInTableOfContents = false;
         }
-        continue;
       }
       
-      // Numaralı başlık tespiti (1., 1.1, 1.1.1 gibi)
-      if (/^\d+(\.\d+)*\.?\s+/.test(line)) {
-        if (currentParagraph) {
-          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
-          currentParagraph = '';
+      // Normal içerik işleme
+      if (!isInTableOfContents) {
+        // Numaralı başlık tespiti (1., 1.1, 1.1.1 gibi)
+        if (/^\d+(\.\d+)*\.?\s+/.test(line)) {
+          if (currentParagraph) {
+            formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+            currentParagraph = '';
+          }
+          const level = (line.match(/\./g) || []).length;
+          formattedContent.push({text: line, type: 'numbered-heading', level});
+          continue;
         }
-        const level = (line.match(/\./g) || []).length;
-        formattedContent.push({text: line, type: 'numbered-heading', level});
-        continue;
+        
+        // Büyük harfli başlık tespiti
+        if (/^[A-ZÜĞŞÇÖI\s]{5,}$/.test(line) && line.length < 50) {
+          if (currentParagraph) {
+            formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+            currentParagraph = '';
+          }
+          formattedContent.push({text: line, type: 'main-heading'});
+          continue;
+        }
+        
+        // Bölüm başlığı tespiti
+        if (/^(BÖLÜM|CHAPTER|BAB|KONU|DERS|UNIT)\s*\d+/i.test(line)) {
+          if (currentParagraph) {
+            formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+            currentParagraph = '';
+          }
+          formattedContent.push({text: line, type: 'chapter-heading'});
+          continue;
+        }
+        
+        // Liste öğesi tespiti
+        if (/^[-*•]\s+/.test(line) || /^\d+[.)]\s+/.test(line)) {
+          if (currentParagraph) {
+            formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
+            currentParagraph = '';
+          }
+          formattedContent.push({text: line, type: 'list-item'});
+          continue;
+        }
       }
       
-      // Büyük harfli başlık tespiti
-      if (/^[A-ZÜĞŞÇÖI\s]{5,}$/.test(line) && line.length < 50) {
-        if (currentParagraph) {
-          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
-          currentParagraph = '';
-        }
-        formattedContent.push({text: line, type: 'main-heading'});
-        continue;
-      }
-      
-      // Bölüm başlığı tespiti
-      if (/^(BÖLÜM|CHAPTER|BAB|KONU|DERS|UNIT)\s*\d+/i.test(line)) {
-        if (currentParagraph) {
-          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
-          currentParagraph = '';
-        }
-        formattedContent.push({text: line, type: 'chapter-heading'});
-        continue;
-      }
-      
-      // Liste öğesi tespiti
-      if (/^[-*•]\s+/.test(line) || /^\d+[.)]\s+/.test(line)) {
-        if (currentParagraph) {
-          formattedContent.push({text: currentParagraph.trim(), type: 'paragraph'});
-          currentParagraph = '';
-        }
-        formattedContent.push({text: line, type: 'list-item'});
-        continue;
-      }
-      
-      // Normal paragraf
+      // Normal paragraf biriktirme
       if (currentParagraph) {
         currentParagraph += ' ' + line;
       } else {
         currentParagraph = line;
       }
       
-      // Paragraf sonu kontrolü (boş satır veya son satır)
+      // Paragraf sonu kontrolü
       if (i === lines.length - 1 || 
           (i < lines.length - 1 && lines[i + 1].trim() === '')) {
         if (currentParagraph.trim()) {
@@ -420,25 +466,22 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
       
       // İçindekiler öğesi
       if (content.type === 'toc-item') {
-        const match = content.text.match(/^(.+?)\s*[.·-]{3,}\s*(\d+)\s*$/);
-        if (match) {
-          const title = match[1].trim();
-          const pageNum = match[2];
-          const level = content.level || 0;
-          
-          return (
-            <div 
-              key={cIndex} 
-              className={`toc-item-display level-${level}`}
-              onClick={() => goToPage(parseInt(pageNum))}
-              title={`Sayfa ${pageNum}'ye git`}
-            >
-              <span className="toc-item-title">{title}</span>
-              <span className="toc-dots"></span>
-              <span className="toc-page-num">{pageNum}</span>
-            </div>
-          );
-        }
+        const title = content.title || '';
+        const pageNum = content.pageNum || '';
+        const level = content.level || 0;
+        
+        return (
+          <div 
+            key={cIndex} 
+            className={`toc-item-book level-${level}`}
+            onClick={() => goToPage(parseInt(pageNum))}
+            title={`Sayfa ${pageNum}'ye git`}
+          >
+            <span className="toc-title-book">{title}</span>
+            <span className="toc-arrow">→</span>
+            <span className="toc-page-book">{pageNum}</span>
+          </div>
+        );
       }
       
       // Bölüm başlığı
@@ -599,111 +642,118 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
     <div className={`container ${isPDFLoaded ? 'pdf-loaded' : ''}`}>
       <h1>Akıllı PDF Okuyucu</h1>
       
-      {/* Gelişmiş Navigasyon Paneli */}
+      {/* Akıllı Navigasyon Paneli */}
       {isPDFLoaded && (
-        <div className="advanced-navigation-panel">
-          <div className="navigation-header">
-            <div className="nav-title">
-              <span className="nav-icon">🧭</span>
-              <span>Navigasyon & Arama</span>
-            </div>
-            <div className="nav-actions">
-              {tableOfContents.length > 0 && (
-                <button 
-                  className="toc-toggle-btn"
-                  onClick={() => setShowTOC(!showTOC)}
-                  title="İçindekiler"
-                >
-                  📚
-                </button>
-              )}
-              <div className="page-counter">
-                Sayfa {currentPage} / {totalPages}
+        <div className="smart-navigation-panel">
+          {/* Üst Kısım - Arama ve Sayfa Bilgisi */}
+          <div className="nav-top-section">
+            <div className="search-container-smart">
+              <div className="search-input-wrapper">
+                <span className="search-icon">🔍</span>
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={handleSearchChange}
+                  placeholder="Ara..."
+                  className="search-input-smart"
+                />
+                {isSearching && <div className="search-loading">⏳</div>}
               </div>
+              
+              {searchResults.length > 0 && (
+                <div className="search-results-compact">
+                  <span className="results-info">
+                    {searchResults.length} sonuç
+                  </span>
+                  <div className="search-nav-compact">
+                    <button 
+                      className="search-nav-btn-compact"
+                      onClick={goToPrevSearchResult}
+                      title="Önceki"
+                    >
+                      ↑
+                    </button>
+                    <span className="search-pos">{currentSearchIndex + 1}/{searchResults.length}</span>
+                    <button 
+                      className="search-nav-btn-compact"
+                      onClick={goToNextSearchResult}
+                      title="Sonraki"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="page-info-smart">
+              <span className="page-current">{currentPage}</span>
+              <span className="page-separator">/</span>
+              <span className="page-total">{totalPages}</span>
             </div>
           </div>
 
-          <div className="navigation-content">
-            {/* Kelime Arama */}
-            <div className="search-section">
-              <div className="search-container-advanced">
-                <div className="search-input-wrapper">
-                  <span className="search-icon">🔍</span>
-                  <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={handleSearchChange}
-                    placeholder="PDF içinde kelime ara (Türkçe karakter desteği)..."
-                    className="search-input-advanced"
-                  />
-                  {isSearching && <div className="search-loading">⏳</div>}
-                </div>
-                
-                {searchResults.length > 0 && (
-                  <div className="search-results-info">
-                    <span className="results-count">
-                      {searchResults.length} sonuç bulundu
-                    </span>
-                    <div className="search-navigation">
-                      <button 
-                        className="search-nav-btn"
-                        onClick={goToPrevSearchResult}
-                        title="Önceki sonuç"
-                      >
-                        ↑
-                      </button>
-                      <span className="search-position">
-                        {currentSearchIndex + 1} / {searchResults.length}
-                      </span>
-                      <button 
-                        className="search-nav-btn"
-                        onClick={goToNextSearchResult}
-                        title="Sonraki sonuç"
-                      >
-                        ↓
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+          {/* Alt Kısım - Sayfa Navigasyonu */}
+          <div className="nav-bottom-section">
+            <div className="page-controls-smart">
+              <button 
+                className="nav-btn-smart" 
+                onClick={() => goToPage(1)}
+                disabled={currentPage === 1}
+                title="İlk sayfa"
+              >
+                ⏮️
+              </button>
+              
+              <button 
+                className="nav-btn-smart" 
+                onClick={handlePrevPage}
+                disabled={currentPage <= 1}
+                title="Önceki sayfa"
+              >
+                ◀️
+              </button>
+
+              <form onSubmit={handlePageInputSubmit} className="page-input-smart">
+                <input
+                  type="number"
+                  min="1"
+                  max={totalPages}
+                  value={pageInput}
+                  onChange={handlePageInputChange}
+                  placeholder={currentPage.toString()}
+                  className="page-number-input"
+                />
+              </form>
+
+              <button 
+                className="nav-btn-smart" 
+                onClick={handleNextPage}
+                disabled={currentPage >= totalPages}
+                title="Sonraki sayfa"
+              >
+                ▶️
+              </button>
+              
+              <button 
+                className="nav-btn-smart" 
+                onClick={() => goToPage(totalPages)}
+                disabled={currentPage === totalPages}
+                title="Son sayfa"
+              >
+                ⏭️
+              </button>
             </div>
 
-            {/* Sayfa Navigasyonu */}
-            <div className="page-navigation-section">
-              <div className="page-controls">
-                <form onSubmit={handlePageInputSubmit} className="page-input-container">
-                  <label className="page-input-label">Sayfa:</label>
-                  <input
-                    type="number"
-                    min="1"
-                    max={totalPages}
-                    value={pageInput}
-                    onChange={handlePageInputChange}
-                    placeholder={currentPage.toString()}
-                    className="page-input-advanced"
-                  />
-                </form>
-
-                <div className="quick-navigation">
-                  <button 
-                    className="quick-nav-btn" 
-                    onClick={() => goToPage(1)}
-                    disabled={currentPage === 1}
-                    title="İlk sayfa"
-                  >
-                    ⏮️ İlk
-                  </button>
-                  <button 
-                    className="quick-nav-btn" 
-                    onClick={() => goToPage(totalPages)}
-                    disabled={currentPage === totalPages}
-                    title="Son sayfa"
-                  >
-                    Son ⏭️
-                  </button>
-                </div>
-              </div>
-            </div>
+            {tableOfContents.length > 0 && (
+              <button 
+                className="toc-btn-smart"
+                onClick={() => setShowTOC(!showTOC)}
+                title="İçindekiler"
+              >
+                📚 İçindekiler
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -749,29 +799,6 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
             </div>
           </div>
         </div>
-
-        {/* Sayfa Geçiş Butonları - Sadece PDF yüklendiyse göster */}
-        {isPDFLoaded && (
-          <div className="page-navigation">
-            <button 
-              className="nav-button prev" 
-              onClick={handlePrevPage}
-              disabled={currentPage <= 1 || isPageTransitioning}
-            >
-              ← Önceki
-            </button>
-            <div className="page-info">
-              Sayfa {currentPage} / {totalPages}
-            </div>
-            <button 
-              className="nav-button next" 
-              onClick={handleNextPage}
-              disabled={currentPage >= totalPages || isPageTransitioning}
-            >
-              Sonraki →
-            </button>
-          </div>
-        )}
 
         {/* İlerleme Çubuğu - Sadece PDF yüklendiyse göster */}
         {isPDFLoaded && (
