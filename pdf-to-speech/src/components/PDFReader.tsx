@@ -119,15 +119,21 @@ export function PDFReader() {
   const speakText = () => {
     console.log('speakText başladı', {
       currentText: state.currentText,
-      selectedVoice: state.selectedVoice
+      selectedVoice: state.selectedVoice,
+      isPlaying: state.isPlaying,
+      isPaused: state.isPaused
     });
 
-    if (!state.currentText || !state.selectedVoice || isReadingRef.current) {
-      console.log('speakText erken çıkış', {
-        hasText: !!state.currentText,
-        hasVoice: !!state.selectedVoice,
-        isReading: isReadingRef.current
-      });
+    if (!state.currentText) {
+      console.log('speakText erken çıkış - metin yok');
+      return;
+    }
+
+    // Eğer duraklatılmışsa ve mevcut bir okuma varsa, devam et
+    if (state.isPaused && window.speechSynthesis.speaking) {
+      console.log('Duraklatılmış okumaya devam ediliyor');
+      window.speechSynthesis.resume();
+      dispatch({ type: 'SET_PAUSED', payload: false });
       return;
     }
 
@@ -159,10 +165,25 @@ export function PDFReader() {
       console.log('Okunacak cümle:', sentence);
 
       const utterance = new SpeechSynthesisUtterance(sentence);
+      
+      // Seçili sesi kullan
       const selectedVoice = state.voices.find(v => v.name === state.selectedVoice);
       console.log('Seçili ses:', selectedVoice);
-      utterance.voice = selectedVoice || null;
-      utterance.lang = 'tr-TR';
+      
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else {
+        // Türkçe sesi dene
+        const turkishVoice = state.voices.find(v => v.lang.startsWith('tr'));
+        if (turkishVoice) {
+          utterance.voice = turkishVoice;
+          utterance.lang = turkishVoice.lang;
+        } else {
+          utterance.lang = 'tr-TR';
+        }
+      }
+
       utterance.rate = 0.8;
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
@@ -201,16 +222,22 @@ export function PDFReader() {
 
   const pauseSpeaking = () => {
     console.log('Duraklatılıyor');
-    window.speechSynthesis.pause();
-    isReadingRef.current = false;
-    dispatch({ type: 'SET_PAUSED', payload: true });
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.pause();
+      isReadingRef.current = false;
+      dispatch({ type: 'SET_PAUSED', payload: true });
+    }
   };
 
   const resumeSpeaking = () => {
     console.log('Devam ediliyor');
-    window.speechSynthesis.resume();
-    isReadingRef.current = true;
-    dispatch({ type: 'SET_PAUSED', payload: false });
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      isReadingRef.current = true;
+      dispatch({ type: 'SET_PAUSED', payload: false });
+    } else {
+      speakText();
+    }
   };
 
   const stopSpeaking = () => {
@@ -240,7 +267,7 @@ export function PDFReader() {
         onPlay={state.isPaused ? resumeSpeaking : speakText}
         onPause={pauseSpeaking}
         onStop={stopSpeaking}
-        disabled={!state.currentText || !state.selectedVoice}
+        disabled={!state.currentText}
       />
 
       <PDFViewer 
