@@ -16,7 +16,7 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
   const [searchResults, setSearchResults] = useState<Array<{page: number, sentence: string, index: number}>>([]);
   const [currentSearchIndex, setCurrentSearchIndex] = useState<number>(-1);
   const [isSearching, setIsSearching] = useState(false);
-  const [tableOfContents, setTableOfContents] = useState<Array<{title: string, page: number}>>([]);
+  const [tableOfContents, setTableOfContents] = useState<Array<{title: string, page: number, level: number}>>([]);
   const [showTOC, setShowTOC] = useState(false);
   
   // PDF yüklenmiş mi kontrolü
@@ -226,6 +226,24 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
   const detectTableOfContents = () => {
     if (!isPDFLoaded) return;
 
+    // Önce document structure'dan içindekiler al
+    if (state.documentStructure?.tableOfContents && state.documentStructure.tableOfContents.length > 0) {
+      setTableOfContents(state.documentStructure.tableOfContents);
+      return;
+    }
+
+    // Eğer document structure'da yoksa, chapters'dan oluştur
+    if (state.documentStructure?.chapters && state.documentStructure.chapters.length > 0) {
+      const tocFromChapters = state.documentStructure.chapters.map(chapter => ({
+        title: chapter.title,
+        page: chapter.page,
+        level: chapter.level
+      }));
+      setTableOfContents(tocFromChapters);
+      return;
+    }
+
+    // Son çare olarak eski yöntemi kullan
     const toc: Array<{title: string, page: number}> = [];
     const tocPatterns = [
       // Türkçe başlık kalıpları
@@ -286,7 +304,7 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
       index === self.findIndex(t => t.title === item.title)
     ).sort((a, b) => a.page - b.page);
 
-    setTableOfContents(uniqueTOC);
+    setTableOfContents(uniqueTOC.map(item => ({ ...item, level: 0 })));
   };
 
   // PDF yüklendiğinde içindekiler tespiti yap
@@ -606,7 +624,173 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
     );
   };
 
+  // Bölüm bazlı okuma
+  const readChapter = (chapterIndex: number) => {
+    if (!state.documentStructure?.chapters || chapterIndex >= state.documentStructure.chapters.length) return;
+    
+    const chapter = state.documentStructure.chapters[chapterIndex];
+    const chapterPage = chapter.page % 2 === 0 ? chapter.page - 1 : chapter.page;
+    
+    // Bölüm sayfasına git
+    dispatch({ type: 'SET_PAGE', payload: { current: chapterPage, total: totalPages } });
+    
+    // Bölüm içeriğini ayarla
+    dispatch({ type: 'SET_TEXT', payload: chapter.content });
+    dispatch({ type: 'SET_SENTENCE', payload: '' });
+    
+    // Okumaya başla
+    window.speechSynthesis.cancel();
+    dispatch({ type: 'SET_PLAYING', payload: true });
+    dispatch({ type: 'SET_PAUSED', payload: false });
+    
+    setShowTOC(false);
+  };
+
+  // Gelişmiş içindekiler render etme
+  const renderAdvancedTableOfContents = () => {
+    if (!state.documentStructure) return null;
+
+    const { chapters, tableOfContents } = state.documentStructure;
+    const tocItems = tableOfContents.length > 0 ? tableOfContents : 
+      chapters.map(chapter => ({ title: chapter.title, page: chapter.page, level: chapter.level }));
+
+    if (tocItems.length === 0) return null;
+
+    return (
+      <div className="advanced-table-of-contents">
+        <div className="toc-header">
+          <h3>📚 İçindekiler & Bölümler</h3>
+          <button 
+            className="toc-close-btn"
+            onClick={() => setShowTOC(false)}
+            title="Kapat"
+          >
+            ✕
+          </button>
+        </div>
+        <div className="toc-content">
+          <div className="toc-stats">
+            <span className="toc-stat">📄 {totalPages} Sayfa</span>
+            <span className="toc-stat">🗂️ {chapters.length} Bölüm</span>
+            <span className="toc-stat">🌍 {state.documentStructure.metadata.language === 'tr' ? 'Türkçe' : 'İngilizce'}</span>
+          </div>
+          
+          {tocItems.map((item, index) => {
+            const isChapter = chapters.find(ch => ch.title === item.title && ch.page === item.page);
+            return (
+              <div 
+                key={index}
+                className={`advanced-toc-item level-${item.level} ${isChapter ? 'is-chapter' : ''}`}
+                onClick={() => isChapter ? readChapter(chapters.indexOf(isChapter)) : goToTOCItem(item.page)}
+                title={isChapter ? `Bölümü okumaya başla: ${item.title}` : `Sayfa ${item.page}'ye git`}
+              >
+                <div className="toc-item-content">
+                  <span className="toc-item-icon">
+                    {isChapter ? '📖' : '📄'}
+                  </span>
+                  <span className="toc-item-title">{item.title}</span>
+                  {isChapter && (
+                    <span className="chapter-badge">Bölüm</span>
+                  )}
+                </div>
+                <div className="toc-item-actions">
+                  <span className="toc-item-page">{item.page}</span>
+                  {isChapter && (
+                    <button 
+                      className="read-chapter-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        readChapter(chapters.indexOf(isChapter));
+                      }}
+                      title="Bu bölümü okumaya başla"
+                    >
+                      ▶️
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   const renderPlaceholder = (isLeftPage: boolean) => {
+    // Eğer document structure varsa, doküman bilgilerini göster
+    if (isPDFLoaded && state.documentStructure && isLeftPage) {
+      const structure = state.documentStructure;
+      const typeNames: Record<string, string> = {
+        'academic_article': 'Akademik Makale',
+        'book': 'Kitap',
+        'report': 'Rapor',
+        'thesis': 'Tez',
+        'presentation': 'Sunum',
+        'document': 'Doküman'
+      };
+
+      return (
+        <div className="document-info">
+          <div className="document-info-content">
+            <h2 className="document-info-title">📚 Doküman Bilgileri</h2>
+            
+            {structure.title && (
+              <div className="info-item">
+                <span className="info-label">📖 Başlık:</span>
+                <span className="info-value">{structure.title}</span>
+              </div>
+            )}
+            
+            {structure.author && (
+              <div className="info-item">
+                <span className="info-label">👤 Yazar:</span>
+                <span className="info-value">{structure.author}</span>
+              </div>
+            )}
+            
+            <div className="info-item">
+              <span className="info-label">📄 Tip:</span>
+              <span className="info-value">{typeNames[structure.metadata.documentType] || 'Doküman'}</span>
+            </div>
+            
+            <div className="info-item">
+              <span className="info-label">📊 Sayfa:</span>
+              <span className="info-value">{structure.metadata.totalPages}</span>
+            </div>
+            
+            <div className="info-item">
+              <span className="info-label">🗂️ Bölüm:</span>
+              <span className="info-value">{structure.chapters.length}</span>
+            </div>
+            
+            {structure.metadata.hasTableOfContents && (
+              <div className="info-item">
+                <span className="info-label">📋 İçindekiler:</span>
+                <span className="info-value">Mevcut</span>
+              </div>
+            )}
+            
+            <div className="info-item">
+              <span className="info-label">🌍 Dil:</span>
+              <span className="info-value">{structure.metadata.language === 'tr' ? 'Türkçe' : 'İngilizce'}</span>
+            </div>
+          </div>
+          
+          <div className="reading-tips">
+            <h3>💡 Okuma İpuçları</h3>
+            <ul>
+              <li>Herhangi bir cümleye tıklayarak o noktadan okumaya başlayabilirsiniz</li>
+              <li>Arama özelliğini kullanarak belirli kelimeleri bulabilirsiniz</li>
+              {structure.chapters.length > 0 && (
+                <li>İçindekiler menüsünden istediğiniz bölüme atlayabilirsiniz</li>
+              )}
+              <li>Okuma hızını ve sesi kontrol panelinden ayarlayabilirsiniz</li>
+            </ul>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="book-placeholder">
         <div className="book-placeholder-content">
@@ -817,7 +1001,7 @@ export function PDFViewer({ currentPage, totalPages, currentSentence }: PDFViewe
       </div>
 
       {/* İçindekiler Paneli */}
-      {showTOC && renderTableOfContents()}
+      {showTOC && (state.documentStructure ? renderAdvancedTableOfContents() : renderTableOfContents())}
     </div>
   );
 } 

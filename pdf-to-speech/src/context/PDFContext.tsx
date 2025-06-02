@@ -1,6 +1,29 @@
 import { createContext, useContext, useReducer } from 'react';
 import type { ReactNode } from 'react';
 
+interface DocumentStructure {
+  title: string;
+  author: string;
+  subject: string;
+  chapters: Array<{
+    title: string;
+    page: number;
+    level: number;
+    content: string;
+  }>;
+  tableOfContents: Array<{
+    title: string;
+    page: number;
+    level: number;
+  }>;
+  metadata: {
+    totalPages: number;
+    hasTableOfContents: boolean;
+    language: string;
+    documentType: string;
+  };
+}
+
 interface PDFState {
   currentText: string;
   currentPage: number;
@@ -12,6 +35,7 @@ interface PDFState {
   isPlaying: boolean;
   isPaused: boolean;
   pagesText: string[];
+  documentStructure: DocumentStructure | null;
 }
 
 type PDFAction =
@@ -23,7 +47,8 @@ type PDFAction =
   | { type: 'SET_SELECTED_VOICE'; payload: string }
   | { type: 'SET_PLAYING'; payload: boolean }
   | { type: 'SET_PAUSED'; payload: boolean }
-  | { type: 'SET_PAGES_TEXT'; payload: string[] };
+  | { type: 'SET_PAGES_TEXT'; payload: string[] }
+  | { type: 'SET_DOCUMENT_STRUCTURE'; payload: DocumentStructure };
 
 const initialState: PDFState = {
   currentText: '',
@@ -36,6 +61,7 @@ const initialState: PDFState = {
   isPlaying: false,
   isPaused: false,
   pagesText: [],
+  documentStructure: null,
 };
 
 function pdfReducer(state: PDFState, action: PDFAction): PDFState {
@@ -58,6 +84,8 @@ function pdfReducer(state: PDFState, action: PDFAction): PDFState {
       return { ...state, isPaused: action.payload };
     case 'SET_PAGES_TEXT':
       return { ...state, pagesText: action.payload };
+    case 'SET_DOCUMENT_STRUCTURE':
+      return { ...state, documentStructure: action.payload };
     default:
       return state;
   }
